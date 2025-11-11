@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol Best 4 Modules Calculator</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin:20px; background:#f0f4f8; }
+  h1 { text-align:center; margin-bottom:20px; }
+  table { border-collapse: collapse; width:100%; margin-bottom:10px; }
+  th, td { border:1px solid #ccc; padding:5px; text-align:center; }
+  th { background:#0078d7; color:white; }
+  input { width:60px; text-align:center; border:none; }
+  input[name="name"] { width:100px; }
+  .btn { padding:5px 10px; margin:5px; cursor:pointer; border:none; border-radius:5px; color:white; font-weight:bold; }
+  .btn-blue { background:#0078d7; }
+  .btn-red { background:#e74c3c; }
+  .btn-green { background:#2ecc71; }
+  .results { background:#eef2fb; padding:10px; border-radius:8px; margin-top:10px; }
+  .container { max-width:1200px; margin:auto; }
+  .highlight { outline: 3px solid #ff9800; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol: Best 4 Modules Calculator</h1>
+<input type="file" id="csvInput" accept=".csv">
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+const STATS = [
+  "Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike",
+  "Healing Boost","Healing Enhance","Resistance","Armor","Cast Focus",
+  "Attack SPD","Crit Focus","Luck Focus"
+];
+
+const thresholds = [1,4,8,12,16,20];
+
+// Color coding helper
+function getColorForValue(val){
+  if(val <=0) return '#f0f0f0';
+  else if(val <=3) return '#d1e7dd';
+  else if(val <=7) return '#a3cfbb';
+  else if(val <=12) return '#66b49c';
+  else if(val <=20) return '#33887c';
+  else return '#0b4d3d';
+}
+
+// Level calculation
+function calcLevel(value){
+  let lvl = 0;
+  for(const t of thresholds) if(value>=t) lvl++;
+  return lvl;
+}
+
+// Generate all combinations of length k
+function combinations(arr, k){
+  const results = [];
+  function comb(current, start){
+    if(current.length === k){
+      results.push([...current]);
+      return;
+    }
+    for(let i=start;i<arr.length;i++){
+      current.push(arr[i]);
+      comb(current,i+1);
+      current.pop();
+    }
+  }
+  comb([],0);
+  return results;
+}
+
+function App(props){
+  const initialData = props?.initialData || [{name:"Module1", ...Object.fromEntries(STATS.map(s=>[s,0]))}];
+  const [data,setData] = React.useState(initialData);
+  const [bestFour,setBestFour] = React.useState([]);
+
+  const handleChange = (i,key,val)=>{
+    const copy = [...data];
+    copy[i][key] = key==="name"? val : Number(val)||0;
+    setData(copy);
+  }
+
+  const handleAddRow = ()=>{
+    setData([...data,{name:`Module${data.length+1}`, ...Object.fromEntries(STATS.map(s=>[s,0]))}]);
+  }
+
+  const handleRemoveRow = (i)=>{
+    setData(data.filter((_,idx)=>idx!==i));
+  }
+
+  // Calculate totals for all data
+  const totals = data.reduce((acc,row)=>{
+    STATS.forEach(stat=>acc[stat]+=(row[stat]||0));
+    return acc;
+  }, Object.fromEntries(STATS.map(s=>[s,0])));
+
+  // Compute best 4 modules combination
+  React.useEffect(()=>{
+    if(data.length < 4){
+      setBestFour([]);
+      return;
+    }
+    const allComb = combinations(data,4);
+    let best = null;
+    let bestScore = -1;
+    allComb.forEach(combo=>{
+      const comboTotals = STATS.reduce((acc,stat)=>{acc[stat]=combo.reduce((sum,m)=>sum+m[stat],0); return acc;},{});
+      const score = STATS.reduce((sum,stat)=>sum+comboTotals[stat],0);
+      if(score>bestScore){
+        bestScore = score;
+        best = combo;
+      }
+    });
+    setBestFour(best);
+  },[data]);
+
+  return e('div',null,
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('table',null,
+      e('thead',null,
+        e('tr',null,
+          e('th',null,'Module Name'),
+          STATS.map(s=>e('th',{key:s},s)),
+          e('th',null,'Remove')
+        )
+      ),
+      e('tbody',null,
+        data.map((row,i)=>e('tr',{key:i, className: bestFour.includes(row)?'highlight':''},
+          e('td',null,e('input',{name:"name",value:row.name,onChange:(e)=>handleChange(i,'name',e.target.value)})),
+          STATS.map(s=>e('td',{key:s, style:{backgroundColor:getColorForValue(row[s])}},
+            e('input',{type:'number',value:row[s],onChange:(e)=>handleChange(i,s,e.target.value), style:{width:'60px', textAlign:'center', background:'transparent', border:'none'}})
+          )),
+          e('td',null,
+            e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕')
+          )
+        ))
+      )
+    ),
+    e('div',{className:"results"},
+      e('h2',null,'Totals & Levels'),
+      e('table',null,
+        e('thead',null,
+          e('tr',null,e('th',null,'Stat'),e('th',null,'Total'),e('th',null,'Level'))
+        ),
+        e('tbody',null,
+          STATS.map(s=>e('tr',{key:s},
+            e('td',null,s),
+            e('td',{style:{backgroundColor:getColorForValue(totals[s])}}, totals[s]),
+            e('td',null,calcLevel(totals[s]))
+          ))
+        )
+      )
+    ),
+    e('div',{style:{marginTop:'10px'}}, 
+      e('strong',null,'Best 4 Modules Highlighted Above (orange outline)')
+    )
+  )
+}
+
+// Render
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+
+// CSV Import
+document.getElementById('csvInput').addEventListener('change',function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const lines = evt.target.result.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim());
+    const rows = lines.slice(1).map(l=>{
+      const vals = l.split(',');
+      const obj = {};
+      headers.forEach((h,i)=>obj[h]=h==="Module Name"? vals[i] : Number(vals[i]||0));
+      return obj;
+    });
+    ReactDOM.createRoot(document.getElementById('root')).render(e(App,{initialData:rows}));
+  };
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>

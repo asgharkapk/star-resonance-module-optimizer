@@ -1,12 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CF-AS-AB-ES Calculator</title>
-</head>
-<body class="bg-gray-50">
-<div id="root"></div>
-<script type="module" src="/src/main.jsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>CF / AS / AB / ES Level Calculator</title>
+
+    <!-- Optional clean modern font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        background: #fafafa;
+        color: #111;
+      }
+
+      #root {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+
+      th {
+        background-color: #f3f3f3;
+      }
+
+      input[type="number"], input[type="text"] {
+        width: 100%;
+        border: none;
+        text-align: center;
+        background: transparent;
+        outline: none;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .btn {
+        margin-top: 10px;
+        margin-right: 10px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: none;
+      }
+
+      .btn-blue {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .btn-green {
+        background: #16a34a;
+        color: white;
+      }
+
+      .results {
+        margin-top: 20px;
+        padding: 10px;
+        background: #eef2ff;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

@@ -153,7 +153,7 @@ function App(props){
   const [data,setData] = React.useState(initialData);
   const [bestResults,setBestResults] = React.useState({});
   const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=true;return acc;},{}));
-  const [calcMethod,setCalcMethod] = React.useState('total'); // 'total' or 'highest'
+  const [calcMethod,setCalcMethod] = React.useState('highest'); // 'total' or 'highest'
 
   // Data handlers
   const handleChange = (i,key,val)=>{
@@ -230,7 +230,7 @@ function App(props){
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
     ),
     e('div',{className:"stats-toggle"},
-      STATS.map(s => e('label', { key: s, style:{marginRight:"10px", whiteSpace:'nowrap'} },
+      STATS.map(s => e('label', { key: s, style:{marginRight:"10px", whiteSpace: 'normal', textAlign:'center'} },
         e('input', { type:'checkbox', checked:visibleStats[s], onChange:()=>toggleStat(s) }),
         e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16, style:{verticalAlign:'middle', marginLeft:'4px', marginRight:'2px'} }),
         s
@@ -272,7 +272,7 @@ function App(props){
           STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
             e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
               e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
-              s
+              s+' Lvl'
             )
           ) : null)
         )),
@@ -291,7 +291,7 @@ function App(props){
           STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
             e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
               e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
-              s
+              s+' Lvl'
             )
           ) : null)
           )),
@@ -310,7 +310,7 @@ function App(props){
           STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
             e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
               e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
-              s
+              s+' Lvl'
             )
           ) : null)
         )),

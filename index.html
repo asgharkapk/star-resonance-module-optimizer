@@ -1,13 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CF/AS/AB/ES Calculator</title>
-    <script type="module" crossorigin src="/src/main.jsx"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.5/dist/tailwind.min.css">
-  </head>
-  <body class="bg-gray-50">
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>CF/AS/AB/ES Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #f9f9f9; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 10px; }
+    th, td { border: 1px solid #ccc; padding: 5px; text-align: center; }
+    th { background: #eee; }
+    input { width: 60px; text-align: center; }
+    .btn { padding: 5px 10px; margin: 5px; cursor: pointer; }
+    .results { background: #eef; padding: 10px; border-radius: 6px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>CF/AS/AB/ES Calculator</h1>
+  <input type="file" id="csvInput" accept=".csv">
+  <div id="root"></div>
+  
+  <script type="text/javascript">
+    const e = React.createElement;
+
+    const thresholds = [1,4,8,12,16,20];
+    function calcLevel(value){
+      let lvl = 0;
+      for(const t of thresholds) if(value>=t) lvl++;
+      return lvl;
+    }
+
+    function App(){
+      const [data, setData] = React.useState([{name:'X1',CF:3,AS:10,AB:0,ES:0}]);
+
+      const handleChange = (i,key,val)=>{
+        const copy = [...data];
+        copy[i][key] = Number(val)||0;
+        setData(copy);
+      }
+
+      const handleAddRow = ()=>{
+        setData([...data,{name:'',CF:0,AS:0,AB:0,ES:0}]);
+      }
+
+      const totals = data.reduce((acc,row)=>{
+        acc.CF+=row.CF; acc.AS+=row.AS; acc.AB+=row.AB; acc.ES+=row.ES;
+        return acc;
+      }, {CF:0,AS:0,AB:0,ES:0});
+
+      return e('div',null,
+        e('button',{className:'btn', onClick:handleAddRow},'+ Add Row'),
+        e('table',null,
+          e('thead',null,
+            e('tr',null,
+              ['Name','CF','AS','AB','ES'].map(h=>e('th',{key:h},h))
+            )
+          ),
+          e('tbody',null,
+            data.map((row,i)=>e('tr',{key:i},
+              e('td',null,e('input',{value:row.name,onChange:(e)=>handleChange(i,'name',e.target.value)})),
+              e('td',null,e('input',{type:'number',value:row.CF,onChange:(e)=>handleChange(i,'CF',e.target.value)})),
+              e('td',null,e('input',{type:'number',value:row.AS,onChange:(e)=>handleChange(i,'AS',e.target.value)})),
+              e('td',null,e('input',{type:'number',value:row.AB,onChange:(e)=>handleChange(i,'AB',e.target.value)})),
+              e('td',null,e('input',{type:'number',value:row.ES,onChange:(e)=>handleChange(i,'ES',e.target.value)}))
+            ))
+          )
+        ),
+        e('div',{className:'results'},
+          e('p',null,`CF Total: ${totals.CF} | Level: ${calcLevel(totals.CF)}`),
+          e('p',null,`AS Total: ${totals.AS} | Level: ${calcLevel(totals.AS)}`),
+          e('p',null,`AB Total: ${totals.AB} | Level: ${calcLevel(totals.AB)}`),
+          e('p',null,`ES Total: ${totals.ES} | Level: ${calcLevel(totals.ES)}`)
+        )
+      )
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+
+    // CSV Import
+    document.getElementById('csvInput').addEventListener('change',function(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt){
+        const lines = evt.target.result.trim().split('\n').slice(1);
+        const parsed = lines.map(l=>{
+          const [name,CF,AS,AB,ES] = l.split(',');
+          return {name, CF:+CF, AS:+AS, AB:+AB, ES:+ES};
+        });
+        ReactDOM.createRoot(document.getElementById('root')).render(e(()=>App({initialData:parsed})));
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
 </html>

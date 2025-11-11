@@ -190,6 +190,11 @@ function App(props){
       e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
     ),
+    e('div',{className:"stats-toggle"},
+      STATS.map(s=>e('label',{key:s, style:{marginRight:"10px"}}, 
+        e('input',{type:'checkbox', checked:visibleStats[s], onChange:()=>toggleStat(s)}), " "+s
+      ))
+    ),
     e('table',null,
       e('thead',null,e('tr',null,
         e('th',null,'Module Name'),

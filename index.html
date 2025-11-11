@@ -152,7 +152,7 @@ function App(props){
   const initialData = props?.initialData || [{name:"X1", ...Object.fromEntries(STATS.map(s=>[s,0]))}];
   const [data,setData] = React.useState(initialData);
   const [bestResults,setBestResults] = React.useState({});
-  const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=true;return acc;},{}));
+  const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=false;return acc;},{}));
   const [calcMethod,setCalcMethod] = React.useState('highest'); // 'total' or 'highest'
 
   // Data handlers

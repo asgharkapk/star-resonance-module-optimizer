@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol Best 4 Modules</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+  body { font-family: Arial,sans-serif; margin:20px; background:#f0f4f8; }
+  h1, h2 { text-align:center; margin-bottom:20px; }
+  table { border-collapse: collapse; width:100%; margin-bottom:20px; }
+  th, td { border:1px solid #ccc; padding:5px; text-align:center; }
+  th { background:#0078d7; color:white; }
+  input { width:60px; text-align:center; border:none; }
+  input[name="name"] { width:120px; }
+  .btn { padding:5px 10px; margin:5px; cursor:pointer; border:none; border-radius:5px; color:white; font-weight:bold; }
+  .btn-blue { background:#0078d7; }
+  .btn-red { background:#e74c3c; }
+  .btn-green { background:#2ecc71; }
+  .results { background:#eef2fb; padding:10px; border-radius:8px; margin-top:10px; }
+  .container { max-width:1400px; margin:auto; }
+  .highlight { outline: 3px solid #ff9800; }
+  .bestModule { font-weight:bold; background:#ffe699; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol: Best 4 Modules Calculator</h1>
+<input type="file" id="csvInput" accept=".csv">
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+// 13 stats
+const STATS = [
+  "Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike",
+  "Healing Boost","Healing Enhance","Resistance","Armor","Cast Focus",
+  "Attack SPD","Crit Focus","Luck Focus"
+];
+
+// thresholds: max level 6, level6 requires total 20
+const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
+
+function level_for(total){
+  if(total>=20) return 6; // cap at 6
+  for(const [lvl,req] of thresholds){
+    if(total >= req) return lvl;
+  }
+  return 0;
+}
+
+// generate all combinations length k
+function combinations(arr, k){
+  const results = [];
+  function comb(current,start){
+    if(current.length===k){ results.push([...current]); return; }
+    for(let i=start;i<arr.length;i++){
+      current.push(arr[i]);
+      comb(current,i+1);
+      current.pop();
+    }
+  }
+  comb([],0);
+  return results;
+}
+
+// color helper
+function getColorForValue(val){
+  if(val <=0) return '#f0f0f0';
+  else if(val <=3) return '#d1e7dd';
+  else if(val <=7) return '#a3cfbb';
+  else if(val <=12) return '#66b49c';
+  else if(val <=20) return '#33887c';
+  else return '#0b4d3d';
+}
+
+function App(props){
+  const initialData = props?.initialData || [
+    {name:"X1", ...Object.fromEntries(STATS.map(s=>[s,0]))}
+  ];
+
+  const [data,setData] = React.useState(initialData);
+  const [bestFour,setBestFour] = React.useState([]);
+  const [bestCombos,setBestCombos] = React.useState({}); // top per stat, total, balanced
+
+  const handleChange = (i,key,val)=>{
+    const copy = [...data];
+    copy[i][key] = key==="name"? val : Number(val)||0;
+    setData(copy);
+  }
+
+  const handleAddRow = ()=>{
+    const newModule = {name:`X${data.length+1}`};
+    STATS.forEach(s=>newModule[s]=0);
+    setData([...data,newModule]);
+  }
+
+  const handleRemoveRow = (i)=>{
+    setData(data.filter((_,idx)=>idx!==i));
+  }
+
+  // totals
+  const totals = data.reduce((acc,row)=>{
+    STATS.forEach(stat=>acc[stat]+=(row[stat]||0));
+    return acc;
+  }, Object.fromEntries(STATS.map(s=>[s,0])));
+
+  // compute best combos whenever data changes
+  React.useEffect(()=>{
+    if(data.length<4){ setBestFour([]); setBestCombos({}); return; }
+
+    const allComb = combinations(data,4);
+    let bestScore=-1, best=null;
+    const bestPerStat={}; // top per stat
+    let bestTotal=null, bestBalanced=null;
+    let maxTotal=-1, maxMinLvl=-1;
+
+    allComb.forEach(combo=>{
+      const sums = Object.fromEntries(STATS.map(s=>[s, combo.reduce((sum,m)=>sum+m[s],0)]));
+      const levels = Object.fromEntries(STATS.map(s=>[s, level_for(sums[s])]));
+      const totalSum = Object.values(sums).reduce((a,b)=>a+b,0);
+      // top total
+      if(totalSum>maxTotal){ maxTotal=totalSum; bestTotal={combo,sums,levels,totalSum}; }
+      // top per stat
+      STATS.forEach(s=>{
+        if(!bestPerStat[s] || sums[s]>bestPerStat[s].sums[s]){
+          bestPerStat[s]={combo,sums,levels};
+        }
+      });
+      // balanced: maximize min level
+      const minLvl = Math.min(...Object.values(levels));
+      if(minLvl>maxMinLvl || (minLvl===maxMinLvl && totalSum>bestBalanced?.totalSum)){
+        maxMinLvl=minLvl; bestBalanced={combo,sums,levels,totalSum};
+      }
+      // main score for best four highlight (total sum)
+      const score = totalSum;
+      if(score>bestScore){ bestScore=score; best=combo; }
+    });
+
+    setBestFour(best);
+    setBestCombos({...bestPerStat, topTotal:bestTotal, bestBalanced:bestBalanced});
+  },[data]);
+
+  function renderTable(title, comboObj){
+    if(!comboObj) return null;
+    return e('div',{className:"results"},
+      e('h2',null,title),
+      e('table',null,
+        e('thead',null,
+          e('tr',null,e('th',null,'Module Name'),STATS.map(s=>e('th',{key:s},s)), e('th',null,'Total'), e('th',null,'Min Level'))
+        ),
+        e('tbody',null,
+          comboObj.combo.map((mod,i)=>e('tr',{key:i},
+            e('td',{className:"bestModule"},mod.name),
+            STATS.map(s=>e('td',{key:s, style:{backgroundColor:getColorForValue(mod[s])}}, mod[s])),
+            e('td',null, Object.values(mod).reduce((a,b)=>STATS.includes(a)?0:a+b,0)),
+            e('td',null, Math.min(...STATS.map(s=>level_for(mod[s]))))
+          ))
+        )
+      )
+    )
+  }
+
+  return e('div',null,
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('table',null,
+      e('thead',null,
+        e('tr',null,
+          e('th',null,'Module Name'),
+          STATS.map(s=>e('th',{key:s},s)),
+          e('th',null,'Remove')
+        )
+      ),
+      e('tbody',null,
+        data.map((row,i)=>e('tr',{key:i, className: bestFour.includes(row)?'highlight':''},
+          e('td',null,e('input',{name:"name",value:row.name,onChange:(e)=>handleChange(i,'name',e.target.value)})),
+          STATS.map(s=>e('td',{key:s, style:{backgroundColor:getColorForValue(row[s])}},
+            e('input',{type:'number',value:row[s],onChange:(e)=>handleChange(i,s,e.target.value), style:{width:'60px', textAlign:'center', background:'transparent', border:'none'}})
+          )),
+          e('td',null,
+            e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕')
+          )
+        ))
+      )
+    ),
+    e('div',{className:"results"},
+      e('h2',null,'Totals & Levels'),
+      e('table',null,
+        e('thead',null,
+          e('tr',null,e('th',null,'Stat'),e('th',null,'Total'),e('th',null,'Level'))
+        ),
+        e('tbody',null,
+          STATS.map(s=>e('tr',{key:s},
+            e('td',null,s),
+            e('td',{style:{backgroundColor:getColorForValue(totals[s])}}, totals[s]),
+            e('td',null,level_for(totals[s]))
+          ))
+        )
+      )
+    ),
+    renderTable("Top Strength Boost Combo", bestCombos["Strength Boost"]),
+    renderTable("Top Agility Boost Combo", bestCombos["Agility Boost"]),
+    renderTable("Top Intellect Boost Combo", bestCombos["Intellect Boost"]),
+    renderTable("Top Special Attack Combo", bestCombos["Special Attack"]),
+    renderTable("Top Elite Strike Combo", bestCombos["Elite Strike"]),
+    renderTable("Top Healing Boost Combo", bestCombos["Healing Boost"]),
+    renderTable("Top Healing Enhance Combo", bestCombos["Healing Enhance"]),
+    renderTable("Top Resistance Combo", bestCombos["Resistance"]),
+    renderTable("Top Armor Combo", bestCombos["Armor"]),
+    renderTable("Top Cast Focus Combo", bestCombos["Cast Focus"]),
+    renderTable("Top Attack SPD Combo", bestCombos["Attack SPD"]),
+    renderTable("Top Crit Focus Combo", bestCombos["Crit Focus"]),
+    renderTable("Top Luck Focus Combo", bestCombos["Luck Focus"]),
+    renderTable("Top Total Combo", bestCombos.topTotal),
+    renderTable("Best Balanced Combo", bestCombos.bestBalanced)
+  )
+}
+
+// render
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+
+// CSV import
+document.getElementById('csvInput').addEventListener('change',function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const lines = evt.target.result.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim());
+    const rows = lines.slice(1).map(l=>{
+      const vals = l.split(',');
+      const obj = {};
+      headers.forEach((h,i)=>obj[h]=h==="Module Name"? vals[i] : Number(vals[i]||0));
+      return obj;
+    });
+    ReactDOM.createRoot(document.getElementById('root')).render(e(App,{initialData:rows}));
+  };
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>

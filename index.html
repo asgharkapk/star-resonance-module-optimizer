@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol Module Calculator - Win7 Style</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background:#d4d0c8;
+  color:#000;
+  margin:0; padding:10px;
+}
+h1 { text-align:center; margin-bottom:20px; }
+table {
+  border-collapse: collapse;
+  width:100%;
+  margin-bottom:20px;
+  background:#fff;
+  box-shadow: inset 0 0 0 #888, 1px 1px 0 #888;
+}
+th, td {
+  border:1px solid #888;
+  padding:5px 8px;
+  text-align:center;
+  font-size:14px;
+}
+th {
+  background:#0a64ad;
+  color:#fff;
+  font-weight:bold;
+}
+input[type=number], input[name="name"]{
+  width:60px;
+  text-align:center;
+  border:1px inset #888;
+  padding:2px;
+  font-family: "Segoe UI", sans-serif;
+}
+input[name="name"]{ width:120px; }
+.btn {
+  padding:4px 10px;
+  margin:4px;
+  cursor:pointer;
+  border:2px outset #ccc;
+  border-radius:2px;
+  font-weight:bold;
+  font-family: "Segoe UI", sans-serif;
+}
+.btn-blue { background:#0a64ad; color:white; }
+.btn-red { background:#c00; color:white; }
+.btn-green { background:#0a7a0a; color:white; }
+.best-combo td { background:#ffd700; font-weight:bold; }
+.level-0 { background:#e0e0e0; }
+.level-1 { background:#f4cccc; }
+.level-2 { background:#fce5cd; }
+.level-3 { background:#fff2cc; }
+.level-4 { background:#d9ead3; }
+.level-5 { background:#c9daf8; }
+.level-6 { background:#9fc5e8; }
+.container { max-width:1200px; margin:auto; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol Module Calculator - Win7 Style</h1>
+
+<input type="file" id="csvInput" accept=".csv">
+<button class="btn btn-green" id="export-import">Export Imported Table CSV</button>
+<button class="btn btn-blue" id="export-all">Export All Output Tables CSV</button>
+
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+const STATS = [
+  "Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike",
+  "Healing Boost","Healing Enhance","Resistance","Armor","Cast Focus",
+  "Attack SPD","Crit Focus","Luck Focus"
+];
+
+const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
+
+function level_for(total){
+  for(const [lvl,req] of thresholds){
+    if(total >= req) return lvl;
+  }
+  return 0;
+}
+
+function combinations(arr, k){
+  const results = [];
+  function comb(current, start){
+    if(current.length === k){ results.push([...current]); return; }
+    for(let i=start;i<arr.length;i++){ current.push(arr[i]); comb(current,i+1); current.pop(); }
+  }
+  comb([],0);
+  return results;
+}
+
+function getLevelClass(lvl){
+  return 'level-'+lvl;
+}
+
+function exportCSVMultiple(tables){
+  let csv = [];
+  tables.forEach(tbl=>{
+    csv.push(tbl.title);
+    csv.push(tbl.headers.join(','));
+    tbl.rows.forEach(r=>{
+      csv.push(r.join(','));
+    });
+    csv.push('');
+  });
+  const blob = new Blob([csv.join('\n')], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "bpsr_module_output.csv";
+  link.click();
+}
+
+function App(props){
+  const initialData = props?.initialData || [{name:"X1", ...Object.fromEntries(STATS.map(s=>[s,0]))}];
+  const [data,setData] = React.useState(initialData);
+  const [bestResults,setBestResults] = React.useState({});
+  const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=true;return acc;},{}));
+
+  const handleChange = (i,key,val)=>{
+    const copy = [...data];
+    copy[i][key] = key==="name"? val : Number(val)||0;
+    setData(copy);
+  }
+
+  const handleAddRow = ()=>{
+    const newModule = {name:`X${data.length+1}`};
+    STATS.forEach(s=>newModule[s]=0);
+    setData([...data,newModule]);
+  }
+
+  const handleRemoveRow = (i)=>setData(data.filter((_,idx)=>idx!==i));
+
+  React.useEffect(()=>{
+    if(data.length<4) return;
+    const allComb = combinations(data,4);
+    const results = [];
+    allComb.forEach(combo=>{
+      const sums = {};
+      STATS.forEach(s=>sums[s]=combo.reduce((acc,m)=>acc+m[s],0));
+      const lvls = {};
+      STATS.forEach(s=>lvls[s]=level_for(sums[s]));
+      const min_lvl = Math.min(...Object.values(lvls));
+      results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
+    });
+    // top total combos (Highest Levels Priority)
+    const topTotal = [...results].sort((a,b)=>{
+      for(let s of STATS){
+        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
+      }
+      return 0;
+    }).slice(0,10);
+
+    const topPerStat = {};
+    STATS.forEach(s=>{
+      topPerStat[s] = [...results].sort((a,b)=>b.lvls[s]-a.lvls[s]).slice(0,5);
+    });
+
+    const balanced = [...results].sort((a,b)=>{
+      if(b.min_lvl!==a.min_lvl) return b.min_lvl-a.min_lvl;
+      for(let s of STATS){
+        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
+      }
+      return 0;
+    }).slice(0,10);
+
+    const bestResultsObj = {topPerStat, topTotal, balanced};
+    setBestResults(bestResultsObj);
+
+    // Save globally for export
+    window.bestResultsGlobal = bestResultsObj;
+    window.appData = data;
+
+  },[data]);
+
+  return e('div',null,
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('table',null,
+      e('thead',null,e('tr',null,
+        e('th',null,'Module Name'),
+        STATS.map(s=>visibleStats[s]?e('th',{key:s},s):null),
+        e('th',null,'Remove')
+      )),
+      e('tbody',null,data.map((row,i)=>e('tr',{key:i},
+        e('td',{className:'level-6'},row.name),
+        STATS.map(s=>visibleStats[s]?e('td',{key:s, className:getLevelClass(level_for(row[s]))}, 
+          e('input',{type:'number', value:row[s], onChange:(e)=>handleChange(i,s,e.target.value)})
+        ):null),
+        e('td',null,e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕'))
+      )))
+    ),
+    bestResults.topTotal && e('div',{className:'results'},
+      e('h3',null,'Top Total combos (Highest Levels Priority)'),
+      e('table',null,
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+        )),
+        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+          e('td',null,r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
+        )))
+      )
+    ),
+    Object.keys(bestResults.topPerStat || {}).map(stat=>{
+      return e('div',{key:stat},
+        e('h3',null,'Top '+stat+' combos'),
+        e('table',null,
+          e('thead',null,e('tr',null,
+            e('th',null,'Modules'),
+            STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+          )),
+          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+            e('td',null,r.combo),
+            STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
+          )))
+        )
+      )
+    }),
+    bestResults.balanced && e('div',{className:'results'},
+      e('h3',null,'Best Balanced combos (maximize min level)'),
+      e('table',null,
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+        )),
+        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+          e('td',null,r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
+        )))
+      )
+    )
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(e(App));
+
+// CSV Import
+document.getElementById('csvInput').addEventListener('change',function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const lines = evt.target.result.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim());
+    const rows = lines.slice(1).map(l=>{
+      const vals = l.split(',');
+      const obj = {};
+      headers.forEach((h,i)=>obj[h]=vals[i]);
+      return obj;
+    });
+    const formatted = rows.map(row=>{
+      const newRow = { name: row["Module Name"] || row.name || "Module" };
+      STATS.forEach(s=>newRow[s]=Number(row[s]||0));
+      return newRow;
+    });
+    root.render(e(App,{initialData:formatted}));
+  };
+  reader.readAsText(file);
+});
+
+// Export imported table
+document.getElementById('export-import').addEventListener('click',()=>{
+  const data = window.appData || [];
+  if(!data.length) return;
+  let csv = [ ["Module Name", ...STATS].join(",") ];
+  data.forEach(row=>{
+    const line = [row.name, ...STATS.map(s=>row[s])];
+    csv.push(line.join(","));
+  });
+  const blob = new Blob([csv.join("\n")], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "imported_modules.csv";
+  link.click();
+});
+
+// Export all output tables
+document.getElementById('export-all').addEventListener('click',()=>{
+  const bestResults = window.bestResultsGlobal;
+  if(!bestResults) return alert("No results to export!");
+  const tables = [];
+
+  // Top Total
+  if(bestResults.topTotal){
+    tables.push({
+      title:"Top Total Combos",
+      headers:["Modules", ...STATS.map(s=>"Lvl "+s)],
+      rows: bestResults.topTotal.map(r=>[r.combo, ...STATS.map(s=>r.lvls[s])])
+    });
+  }
+
+  // Top per Stat
+  for(const s of STATS){
+    if(bestResults.topPerStat && bestResults.topPerStat[s]){
+      tables.push({
+        title:"Top "+s+" Combos",
+        headers:["Modules", ...STATS.map(st=>"Lvl "+st)],
+        rows: bestResults.topPerStat[s].map(r=>[r.combo, ...STATS.map(st=>r.lvls[st])])
+      });
+    }
+  }
+
+  // Best Balanced
+  if(bestResults.balanced){
+    tables.push({
+      title:"Best Balanced Combos",
+      headers:["Modules", ...STATS.map(s=>"Lvl "+s)],
+      rows: bestResults.balanced.map(r=>[r.combo, ...STATS.map(s=>r.lvls[s])])
+    });
+  }
+
+  exportCSVMultiple(tables);
+});
+</script>
+</body>
+</html>

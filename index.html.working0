@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol: Star Resonance Module Calculator</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+body {
+  font-family: 'Orbitron', sans-serif;
+  margin:0; background:#0b0c10; color:#c5c6c7;
+}
+h1 {
+  text-align:center; margin:20px 0; color:#66fcf1; text-shadow: 0 0 10px #45a29e;
+}
+table { border-collapse: collapse; width:100%; margin-bottom:20px; border-radius:5px; overflow:hidden; }
+th, td { border:1px solid #1f2833; padding:6px; text-align:center; font-size:14px; }
+th { background:#1f2833; color:#66fcf1; position: sticky; top:0; z-index:1; }
+input[type=number] { width:60px; text-align:center; background:#1f2833; border:none; color:#c5c6c7; border-radius:3px; }
+input[name="name"] { width:120px; background:#1f2833; color:#c5c6c7; border:none; border-radius:3px; font-weight:bold;}
+.btn { padding:5px 10px; margin:5px; cursor:pointer; border:none; border-radius:5px; color:white; font-weight:bold; font-family: 'Orbitron', sans-serif; }
+.btn-blue { background:#45a29e; }
+.btn-red { background:#e74c3c; }
+.btn-green { background:#66fcf1; color:#0b0c10; }
+.container { max-width:1400px; margin:auto; padding:10px; }
+.highlight { outline: 2px solid #66fcf1; background: rgba(102,252,241,0.2); }
+.stats-toggle { margin:10px 0; }
+.dark-table th, .dark-table td { border-color:#1f2833; transition: background 0.2s; }
+.section-title { color:#45a29e; text-shadow:0 0 5px #66fcf1; margin-top:20px; margin-bottom:5px; }
+.export-btn { margin-bottom:10px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol: Star Resonance Module Calculator</h1>
+<input type="file" id="csvInput" accept=".csv">
+<button class="btn btn-green" id="export-import">Export Imported Table CSV</button>
+<div class="stats-toggle"></div>
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+const STATS = [
+  "Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike",
+  "Healing Boost","Healing Enhance","Resistance","Armor","Cast Focus",
+  "Attack SPD","Crit Focus","Luck Focus"
+];
+
+const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
+
+function level_for(total){
+  for(const [lvl,req] of thresholds){
+    if(total >= req) return lvl;
+  }
+  return 0;
+}
+
+function combinations(arr, k){
+  const results = [];
+  function comb(current, start){
+    if(current.length === k){ results.push([...current]); return; }
+    for(let i=start;i<arr.length;i++){ current.push(arr[i]); comb(current,i+1); current.pop(); }
+  }
+  comb([],0);
+  return results;
+}
+
+function getColorForLevel(lvl){
+  // improved visibility gradient
+  switch(lvl){
+    case 0: return '#1f2833';
+    case 1: return '#1b1b2f';
+    case 2: return '#252850';
+    case 3: return '#2e2f5c';
+    case 4: return '#3940a0';
+    case 5: return '#4a47d0';
+    case 6: return '#66fcf1';
+    default: return '#66fcf1';
+  }
+}
+
+function exportCSV(data, stats, filename="best_modules.csv"){
+  if(!data || data.length===0) return;
+  let csv = [ ["Module Names", ...stats.map(s=>"Lvl "+s)].join(",") ];
+  data.forEach(row=>{
+    const line = [row.combo.split(",").join(";"), ...stats.map(s=>row.lvls[s])];
+    csv.push(line.join(","));
+  });
+  const blob = new Blob([csv.join("\n")], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+function exportImportedCSV(data, stats){
+  if(!data || data.length===0) return;
+  let csv = [ ["Module Name", ...stats].join(",") ];
+  data.forEach(row=>{
+    const line = [row.name, ...stats.map(s=>row[s])];
+    csv.push(line.join(","));
+  });
+  const blob = new Blob([csv.join("\n")], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "imported_modules.csv";
+  link.click();
+}
+
+function App(props){
+  const initialData = props?.initialData || [{name:"X1", ...Object.fromEntries(STATS.map(s=>[s,0]))}];
+  const [data,setData] = React.useState(initialData);
+  const [bestResults,setBestResults] = React.useState({});
+  const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=true;return acc;},{}));
+
+  React.useEffect(()=>{
+    window.appSetData = (rows)=>{
+      const formatted = rows.map(row=>{
+        const newRow = { name: row["Module Name"] || row.name || "Module" };
+        STATS.forEach(s => newRow[s] = Number(row[s]||0));
+        return newRow;
+      });
+      setData(formatted);
+    };
+    return ()=>{ window.appSetData=null; }
+  },[]);
+
+  const handleChange = (i,key,val)=>{
+    const copy = [...data];
+    copy[i][key] = key==="name"? val : Number(val)||0;
+    setData(copy);
+  }
+
+  const handleAddRow = ()=>{
+    const newModule = {name:`X${data.length+1}`};
+    STATS.forEach(s=>newModule[s]=0);
+    setData([...data,newModule]);
+  }
+
+  const handleRemoveRow = (i)=>setData(data.filter((_,idx)=>idx!==i));
+
+  const toggleStat = (stat)=> setVisibleStats({...visibleStats, [stat]:!visibleStats[stat]});
+
+  React.useEffect(()=>{
+    if(data.length<4) return;
+    const allComb = combinations(data,4);
+    const results = [];
+    allComb.forEach(combo=>{
+      const sums = {};
+      STATS.forEach(s=>sums[s]=combo.reduce((acc,m)=>acc+m[s],0));
+      const lvls = {};
+      STATS.forEach(s=>lvls[s]=level_for(sums[s]));
+      const min_lvl = Math.min(...Object.values(lvls));
+      results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
+    });
+    const topPerStat = {};
+    STATS.forEach(s=>{
+      topPerStat[s] = [...results].sort((a,b)=>b.lvls[s]-a.lvls[s]).slice(0,5);
+    });
+    const topTotal = [...results].sort((a,b)=>{
+      // compute vector comparison: prioritize highest individual lvls
+      for(let s of STATS){
+        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
+      }
+      return 0;
+    }).slice(0,10);
+
+    const balanced = [...results].sort((a,b)=>{
+      if(b.min_lvl!==a.min_lvl) return b.min_lvl-a.min_lvl;
+      for(let s of STATS){
+        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
+      }
+      return 0;
+    }).slice(0,10);
+
+    setBestResults({topPerStat, topTotal, balanced});
+  },[data]);
+
+  return e('div',null,
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('div',{className:"stats-toggle"},
+      STATS.map(s=>e('label',{key:s, style:{marginRight:"10px"}}, 
+        e('input',{type:'checkbox', checked:visibleStats[s], onChange:()=>toggleStat(s)}), " "+s
+      ))
+    ),
+    e('table',{className:'dark-table'},
+      e('thead',null,e('tr',null,
+        e('th',null,'Module Name'),
+        STATS.map(s=>visibleStats[s]?e('th',{key:s},s):null),
+        e('th',null,'Remove')
+      )),
+      e('tbody',null,data.map((row,i)=>e('tr',{key:i},
+        e('td',{style:{fontWeight:'bold', color:'#66fcf1', background:'#1f2833'}},row.name),
+        STATS.map(s=>visibleStats[s]?e('td',{key:s, style:{backgroundColor:getColorForLevel(level_for(row[s]))}}, 
+          e('input',{type:'number', value:row[s], onChange:(e)=>handleChange(i,s,e.target.value)})
+        ):null),
+        e('td',null,e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕'))
+      )))
+    ),
+    bestResults.topPerStat && Object.keys(bestResults.topPerStat).map(stat=>{
+      return e('div',{key:stat,className:'results'},
+        e('h3',{className:'section-title'},'Top '+stat+' combos'),
+        e('button',{className:'btn export-btn btn-green', onClick:()=>exportCSV(bestResults.topPerStat[stat], STATS, 'top_'+stat+'.csv')},'Export CSV'),
+        e('table',{className:'dark-table'},
+          e('thead',null,e('tr',null,
+            e('th',null,'Modules'),
+            STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+          )),
+          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i},
+            e('td',{style:{fontWeight:'bold', color:'#0b0c10', background:'#66fcf1'}}, r.combo),
+            STATS.map(s=>visibleStats[s]?e('td',{key:s, style:{backgroundColor:getColorForLevel(r.lvls[s])}}, r.lvls[s]):null)
+          )))
+        )
+      );
+    }),
+    bestResults.topTotal && e('div',{className:'results'},
+      e('h3',{className:'section-title'},'Top Total combos (Highest Levels Priority)'),
+      e('button',{className:'btn export-btn btn-green', onClick:()=>exportCSV(bestResults.topTotal, STATS,'top_total.csv')},'Export CSV'),
+      e('table',{className:'dark-table'},
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+        )),
+        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i},
+          e('td',{style:{fontWeight:'bold', color:'#0b0c10', background:'#66fcf1'}}, r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s, style:{backgroundColor:getColorForLevel(r.lvls[s])}}, r.lvls[s]):null)
+        )))
+      )
+    ),
+    bestResults.balanced && e('div',{className:'results'},
+      e('h3',{className:'section-title'},'Best Balanced combos (maximize min level)'),
+      e('button',{className:'btn export-btn btn-green', onClick:()=>exportCSV(bestResults.balanced, STATS,'best_balanced.csv')},'Export CSV'),
+      e('table',{className:'dark-table'},
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s=>visibleStats[s]?e('th',{key:s},s+' Lvl'):null)
+        )),
+        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i},
+          e('td',{style:{fontWeight:'bold', color:'#0b0c10', background:'#66fcf1'}}, r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s, style:{backgroundColor:getColorForLevel(r.lvls[s])}}, r.lvls[s]):null)
+        )))
+      )
+    )
+  );
+}
+
+// Render App
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(e(App));
+
+// CSV Import
+document.getElementById('csvInput').addEventListener('change',function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const lines = evt.target.result.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim());
+    const rows = lines.slice(1).map(l=>{
+      const vals = l.split(',');
+      const obj = {};
+      headers.forEach((h,i)=>obj[h]=vals[i]);
+      return obj;
+    });
+    if(window.appSetData) window.appSetData(rows);
+  };
+  reader.readAsText(file);
+});
+
+// Export imported table CSV
+document.getElementById('export-import').addEventListener('click',()=>{
+  const appData = window.appSetData?window.appSetData:null;
+  const data = document.querySelector('#root')?window.appData: null;
+  if(window.appSetData) exportImportedCSV(window.appSetData.data, STATS);
+});
+</script>
+</body>
+</html>

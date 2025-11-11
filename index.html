@@ -71,14 +71,14 @@ function combinations(arr, k){
 function getColorForLevel(lvl){
   // improved visibility gradient
   switch(lvl){
-    case 0: return '#1f2833';
-    case 1: return '#1b1b2f';
-    case 2: return '#252850';
-    case 3: return '#2e2f5c';
-    case 4: return '#3940a0';
-    case 5: return '#4a47d0';
-    case 6: return '#66fcf1';
-    default: return '#66fcf1';
+    case 0: return '#1b1b1b';   // dark gray
+    case 1: return '#e74c3c';   // red
+    case 2: return '#e67e22';   // orange
+    case 3: return '#f1c40f';   // yellow
+    case 4: return '#2ecc71';   // green
+    case 5: return '#1abc9c';   // cyan
+    case 6: return '#3498db';   // bright blue
+    default: return '#ffffff';   // fallback
   }
 }
 

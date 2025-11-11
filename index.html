@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol Module Calculator</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin:20px; background:#f0f4f8; }
+  h1 { text-align:center; margin-bottom:20px; }
+  table { border-collapse: collapse; width:100%; margin-bottom:10px; }
+  th, td { border:1px solid #ccc; padding:5px; text-align:center; }
+  th { background:#0078d7; color:white; }
+  input { width:60px; text-align:center; border:none; }
+  input[name="name"] { width:100px; }
+  .btn { padding:5px 10px; margin:5px; cursor:pointer; border:none; border-radius:5px; color:white; font-weight:bold; }
+  .btn-blue { background:#0078d7; }
+  .btn-red { background:#e74c3c; }
+  .btn-green { background:#2ecc71; }
+  .results { background:#eef2fb; padding:10px; border-radius:8px; margin-top:10px; }
+  .container { max-width:1200px; margin:auto; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol: Star Resonance Module Calculator</h1>
+<input type="file" id="csvInput" accept=".csv">
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+const STATS = [
+  "Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike",
+  "Healing Boost","Healing Enhance","Resistance","Armor","Cast Focus",
+  "Attack SPD","Crit Focus","Luck Focus"
+];
+
+const thresholds = [1,4,8,12,16,20];
+
+function calcLevel(value){
+  let lvl = 0;
+  for(const t of thresholds) if(value>=t) lvl++;
+  return lvl;
+}
+
+function App(){
+  const [data,setData] = React.useState([{name:"Module1", ...Object.fromEntries(STATS.map(s=>[s,0]))}]);
+
+  const handleChange = (i,key,val)=>{
+    const copy = [...data];
+    copy[i][key] = key==="name"? val : Number(val)||0;
+    setData(copy);
+  }
+
+  const handleAddRow = ()=>{
+    setData([...data,{name:`Module${data.length+1}`, ...Object.fromEntries(STATS.map(s=>[s,0]))}]);
+  }
+
+  const handleRemoveRow = (i)=>{
+    setData(data.filter((_,idx)=>idx!==i));
+  }
+
+  const totals = data.reduce((acc,row)=>{
+    STATS.forEach(stat=>acc[stat]+=(row[stat]||0));
+    return acc;
+  }, Object.fromEntries(STATS.map(s=>[s,0])));
+
+  return e('div',null,
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('table',null,
+      e('thead',null,
+        e('tr',null,
+          e('th',null,'Module Name'),
+          STATS.map(s=>e('th',{key:s},s)),
+          e('th',null,'Remove')
+        )
+      ),
+      e('tbody',null,
+        data.map((row,i)=>e('tr',{key:i},
+          e('td',null,e('input',{name:"name",value:row.name,onChange:(e)=>handleChange(i,'name',e.target.value)})),
+          STATS.map(s=>e('td',{key:s},
+            e('input',{type:'number',value:row[s],onChange:(e)=>handleChange(i,s,e.target.value)})
+          )),
+          e('td',null,
+            e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕')
+          )
+        ))
+      )
+    ),
+    e('div',{className:"results"},
+      e('h2',null,'Totals & Levels'),
+      e('table',null,
+        e('thead',null,
+          e('tr',null,e('th',null,'Stat'),e('th',null,'Total'),e('th',null,'Level'))
+        ),
+        e('tbody',null,
+          STATS.map(s=>e('tr',{key:s},
+            e('td',null,s),
+            e('td',null,totals[s]),
+            e('td',null,calcLevel(totals[s]))
+          ))
+        )
+      )
+    )
+  )
+}
+
+// Render
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+
+// CSV Import
+document.getElementById('csvInput').addEventListener('change',function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const lines = evt.target.result.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim());
+    const rows = lines.slice(1).map(l=>{
+      const vals = l.split(',');
+      const obj = {};
+      headers.forEach((h,i)=>obj[h]=h==="Module Name"? vals[i] : Number(vals[i]||0));
+      return obj;
+    });
+    ReactDOM.createRoot(document.getElementById('root')).render(e(App,{initialData:rows}));
+  };
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>

@@ -146,6 +146,7 @@ function App(props){
 
   const toggleStat = (stat)=> setVisibleStats({...visibleStats, [stat]:!visibleStats[stat]});
   
+  // Compute best combos
   React.useEffect(()=>{
     if(data.length<4) return;
     const allComb = combinations(data,4);
@@ -158,34 +159,38 @@ function App(props){
       const min_lvl = Math.min(...Object.values(lvls));
       results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
     });
-    // top total combos (Highest Levels Priority)
-    const topTotal = [...results].sort((a,b)=>{
-      for(let s of STATS){
-        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
-      }
-      return 0;
-    }).slice(0,10);
-
+  
+    // Top per stat (highest level)
     const topPerStat = {};
     STATS.forEach(s=>{
-      topPerStat[s] = [...results].sort((a,b)=>b.lvls[s]-a.lvls[s]).slice(0,5);
+      const sorted = [...results].sort((a,b)=>b.lvls[s]-a.lvls[s]); // sort by level first
+      topPerStat[s] = sorted.slice(0,5);
     });
-
+  
+    // Top combinations: prioritize **max level per stat**, then min level of combo, then sum of levels
+    const topTotal = [...results].sort((a,b)=>{
+      // Compare by max level vector lexicographically
+      for(let s of STATS){
+        if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
+      }
+      // tie-breaker: min level
+      if(b.min_lvl!==a.min_lvl) return b.min_lvl - a.min_lvl;
+      // tie-breaker: total sum of levels
+      const sumA = STATS.reduce((acc,s)=>acc+a.lvls[s],0);
+      const sumB = STATS.reduce((acc,s)=>acc+b.lvls[s],0);
+      return sumB - sumA;
+    }).slice(0,10);
+  
+    // Best balanced (maximize min level first, then lexicographically highest)
     const balanced = [...results].sort((a,b)=>{
-      if(b.min_lvl!==a.min_lvl) return b.min_lvl-a.min_lvl;
+      if(b.min_lvl!==a.min_lvl) return b.min_lvl - a.min_lvl;
       for(let s of STATS){
         if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s];
       }
       return 0;
     }).slice(0,10);
-
-    const bestResultsObj = {topPerStat, topTotal, balanced};
-    setBestResults(bestResultsObj);
-
-    // Save globally for export
-    window.bestResultsGlobal = bestResultsObj;
-    window.appData = data;
-
+  
+    setBestResults({topPerStat, topTotal, balanced});
   },[data]);
 
   return e('div',null,

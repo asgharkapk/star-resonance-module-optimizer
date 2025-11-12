@@ -87,7 +87,7 @@ const STATS = [
   "Attack SPD", "Crit Focus", "Luck Focus", "DMG Stack", "Agile",
   "Life Condense", "First Aid", "Final Protection", "Life Wave", "Life Steal", "Team Luck & Crit"
 ];
-
+//icons from Maxroll
 const STAT_ICONS = {
   "Strength Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_011.webp",
   "Agility Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_039.webp",
@@ -110,6 +110,13 @@ const STAT_ICONS = {
   "Life Wave": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_004.webp",
   "Life Steal": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_035.webp",
   "Team Luck & Crit": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_017.webp"
+};
+// Define role groups
+const ROLE_STATS = {
+  DPS: ["Strength Boost","Agility Boost","Intellect","Special Attack","Elite Strike","Attack SPD","Crit Focus","DMG Stack","Agile"],
+  HEALER: ["Healing Boost","Healing Enhance","First Aid","Life Condense","Life Wave"],
+  TANK: ["Resistance","Armor","Final Protection"],
+  SUPPORT: ["Cast Focus","Luck Focus","Life Steal","Team Luck & Crit"]
 };
 
 const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
@@ -154,6 +161,10 @@ function App(props){
   const [bestResults,setBestResults] = React.useState({});
   const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=false;return acc;},{}));
   const [calcMethod,setCalcMethod] = React.useState('highest'); // 'total' or 'highest'
+  
+  const selectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=true; return acc;},{}));
+  const deselectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=false; return acc;},{}));
+  const selectRole = (role) => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=ROLE_STATS[role].includes(s); return acc;},{}));
 
   // Data handlers
   const handleChange = (i,key,val)=>{
@@ -327,6 +338,14 @@ function App(props){
     e('div',{className:"mb-2"},
       e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('div',{className:"stats-buttons", style:{marginBottom:"8px", display:'flex', gap:'8px', flexWrap:'wrap'}},
+      e('button',{className:"btn btn-blue", onClick:selectAll},"Select All"),
+      e('button',{className:"btn btn-red", onClick:deselectAll},"Deselect All"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('DPS')},"DPS"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('HEALER')},"HEALER"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('TANK')},"TANK"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('SUPPORT')},"SUPPORT")
     ),
     e('div',{className:"stats-toggle"},
       STATS.map(s => e('label', { key: s, style:{marginRight:"10px", whiteSpace: 'normal', textAlign:'center'} },

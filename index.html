@@ -186,16 +186,16 @@ function App(props){
       topPerStat[s] = sorted.slice(0,5);
     });
 
-    // Top Total / Highest Levels
+// Top Total / Highest Levels / Smart Combo
     let topTotal = [...results];
+  // 📊 Sort by sum of all levels
     if(calcMethod==='total'){
-      topTotal.sort((a,b)=>{
-        for(let s of STATS){ if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s]; }
-        if(b.min_lvl!==a.min_lvl) return b.min_lvl - a.min_lvl;
-        const sumA = STATS.reduce((acc,s)=>acc+a.lvls[s],0);
-        const sumB = STATS.reduce((acc,s)=>acc+b.lvls[s],0);
-        return sumB - sumA;
+      topTotal.sort((a, b) => {
+        const totalA = STATS.reduce((acc, s) => acc + (a.lvls[s] || 0), 0);
+        const totalB = STATS.reduce((acc, s) => acc + (b.lvls[s] || 0), 0);
+        return totalB - totalA; // highest total levels first
       });
+  // 🏆 Sort by how many high-level stats each combo has
     } else if(calcMethod==='highest'){
       function levelVector(r){
         const counts = Array(7).fill(0);
@@ -207,6 +207,98 @@ function App(props){
         const vecB = levelVector(b);
         for(let i=0;i<vecA.length;i++){ if(vecB[i]!==vecA[i]) return vecB[i]-vecA[i]; }
         return 0;
+      });
+  // 🧠 Smart mode: combine both level distribution and raw totals
+    } else if(calcMethod === 'smart') {
+      function levelVector(r){
+        const counts = Array(7).fill(0);
+        STATS.forEach(s=>counts[r.lvls[s]]++);
+        return counts.reverse();
+      }
+      topTotal.sort((a,b)=>{
+        const vecA = levelVector(a);
+        const vecB = levelVector(b);
+    
+        // 1️⃣ Prioritize more high-level stats (6s > 5s > 4s…)
+        for(let i=0;i<vecA.length;i++){
+          if(vecB[i]!==vecA[i]) return vecB[i]-vecA[i];
+        }
+    
+        // 2️⃣ If tied, compare sum of all levels
+        const sumA = STATS.reduce((acc,s)=>acc+a.lvls[s],0);
+        const sumB = STATS.reduce((acc,s)=>acc+b.lvls[s],0);
+        if(sumB !== sumA) return sumB - sumA;
+    
+        // 3️⃣ Final tie-break: compare raw total stat values
+        const rawA = STATS.reduce((acc,s)=>acc+a.sums[s],0);
+        const rawB = STATS.reduce((acc,s)=>acc+b.sums[s],0);
+        return rawB - rawA;
+      });
+    } else if (calcMethod === 'weighted') {
+      // Higher levels are exponentially more valuable
+      const weights = [0, 1, 2, 4, 8, 16, 32]; // index = level
+      topTotal.sort((a,b)=>{
+        const scoreA = STATS.reduce((acc,s)=>acc+weights[a.lvls[s]||0],0);
+        const scoreB = STATS.reduce((acc,s)=>acc+weights[b.lvls[s]||0],0);
+        return scoreB - scoreA;
+      });
+    } else if (calcMethod === 'balanced') {
+      // Minimize variance between stat levels
+      topTotal.sort((a,b)=>{
+        const avgA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0)/STATS.length;
+        const avgB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0)/STATS.length;
+    
+        const varA = STATS.reduce((acc,s)=>acc+Math.pow((a.lvls[s]||0)-avgA,2),0);
+        const varB = STATS.reduce((acc,s)=>acc+Math.pow((b.lvls[s]||0)-avgB,2),0);
+    
+        // Prefer higher average, lower variance
+        if(avgB!==avgA) return avgB - avgA;
+        return varA - varB;
+      });
+    } else if (calcMethod === 'spike') {
+      // Focus on the single best stat of the combo
+      topTotal.sort((a,b)=>{
+        const maxA = Math.max(...STATS.map(s=>a.lvls[s]||0));
+        const maxB = Math.max(...STATS.map(s=>b.lvls[s]||0));
+        if(maxB !== maxA) return maxB - maxA;
+    
+        // If tied, prefer higher total
+        const totalA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0);
+        const totalB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0);
+        return totalB - totalA;
+      });
+    } else if (calcMethod === 'efficiency') {
+      // Best ratio of total raw stat sum / number of high-level stats
+      topTotal.sort((a,b)=>{
+        const rawA = STATS.reduce((acc,s)=>acc+(a.sums[s]||0),0);
+        const rawB = STATS.reduce((acc,s)=>acc+(b.sums[s]||0),0);
+    
+        const highCountA = STATS.filter(s=>a.lvls[s]>=4).length;
+        const highCountB = STATS.filter(s=>b.lvls[s]>=4).length;
+    
+        const effA = rawA / (highCountA || 1);
+        const effB = rawB / (highCountB || 1);
+    
+        return effB - effA;
+      });
+    } else if (calcMethod === 'synergy') {
+      const SYNERGY_PAIRS = [
+        ['Attack SPD','Crit Focus'],
+        ['Healing Boost','Healing Enhance'],
+        ['Strength Boost','Special Attack']
+      ];
+      topTotal.sort((a,b)=>{
+        const baseA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0);
+        const baseB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0);
+    
+        const synA = SYNERGY_PAIRS.reduce((acc,[s1,s2])=>{
+          return acc + Math.min(a.lvls[s1]||0, a.lvls[s2]||0);
+        },0);
+        const synB = SYNERGY_PAIRS.reduce((acc,[s1,s2])=>{
+          return acc + Math.min(b.lvls[s1]||0, b.lvls[s2]||0);
+        },0);
+    
+        return (baseB+synB*2) - (baseA+synA*2);
       });
     }
     topTotal = topTotal.slice(0,10);
@@ -242,6 +334,24 @@ function App(props){
       ),
       e('label',{style:{marginLeft:"20px"}},
         e('input',{type:'radio', checked:calcMethod==='highest', onChange:()=>setCalcMethod('highest')}), " Highest Levels"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='smart', onChange:()=>setCalcMethod('smart')}), " Smart Combination"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='weighted', onChange:()=>setCalcMethod('weighted')}), " Weighted Power"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='balanced', onChange:()=>setCalcMethod('balanced')}), " Balanced Mode"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='spike', onChange:()=>setCalcMethod('spike')}), " Spike Mode"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='efficiency', onChange:()=>setCalcMethod('efficiency')}), " Efficiency Mode"
+      ),
+      e('label',{style:{marginLeft:"20px"}},
+        e('input',{type:'radio', checked:calcMethod==='synergy', onChange:()=>setCalcMethod('synergy')}), " Synergy Mode"
       )
     ),
     e('table',null,
@@ -265,7 +375,17 @@ function App(props){
       )))
     ),
     bestResults.topTotal && e('div',{className:'results'},
-      e('h3', null, calcMethod==='total' ? 'Top Total combos (Highest Levels Priority)' : 'Top combos (Most High Levels)'),
+      e('h3', null, 
+        calcMethod === 'total'      ? 'Top Total Combos (Highest Sum of Levels)' :
+        calcMethod === 'highest'    ? 'Top Combos (Most High-Level Stats)' :
+        calcMethod === 'smart'      ? 'Smart Combination Results (Weighted Hybrid Ranking)' :
+        calcMethod === 'weighted'   ? 'Weighted Power Mode (Exponential Level Value)' :
+        calcMethod === 'balanced'   ? 'Balanced Mode (Even Stat Distribution)' :
+        calcMethod === 'spike'      ? 'Spike Mode (Specialized Peak Stats)' :
+        calcMethod === 'efficiency' ? 'Efficiency Mode (Best Value per High Stat)' :
+        calcMethod === 'synergy'    ? 'Synergy Mode (Complementary Stat Combos)' :
+        'Top Combos'
+      ),
       e('table',null,
         e('thead',null,e('tr',null,
           e('th',null,'Modules'),

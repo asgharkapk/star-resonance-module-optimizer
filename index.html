@@ -197,7 +197,7 @@ function App(props){
   const [data,setData] = React.useState(initialData);
   const [bestResults,setBestResults] = React.useState({});
   const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=false;return acc;},{}));
-  const [calcMethod,setCalcMethod] = React.useState('highest'); // 'total' or 'highest'
+  const [calcMethod,setCalcMethod] = React.useState('total'); // 'total' or 'highest'
   
   const selectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=true; return acc;},{}));
   const deselectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=false; return acc;},{}));
@@ -449,10 +449,6 @@ function App(props){
 
   // Render
   return e('div',null,
-    e('div',{className:"mb-2"},
-      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
-      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
-    ),
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
       e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, 'Presets based on Maxroll Build Guides:'),
       // Custom dropdown
@@ -524,6 +520,10 @@ function App(props){
         ) : null),
         e('td',null,e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕'))
       )))
+    ),
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
     ),
     bestResults.topTotal && e('div',{className:'results'},
       e('h3', null, 

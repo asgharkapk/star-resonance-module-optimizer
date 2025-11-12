@@ -167,6 +167,13 @@ function App(props){
   const handleRemoveRow = (i)=>setData(data.filter((_,idx)=>idx!==i));
   const toggleStat = (stat)=> setVisibleStats({...visibleStats, [stat]:!visibleStats[stat]});
 
+  React.useEffect(() => {
+    // Expose a function globally to update CSV
+    window.loadCSVData = (formatted) => {
+      setData(formatted);
+    };
+  }, []);
+
   // Compute best combos
   React.useEffect(()=>{
     if(data.length<4) return;
@@ -447,26 +454,40 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(e(App));
 
 // CSV Import
-document.getElementById('csvInput').addEventListener('change',function(e){
+document.getElementById('csvInput').addEventListener('change', function (e) {
   const file = e.target.files[0];
-  if(!file) return;
+  if (!file) return;
+
   const reader = new FileReader();
-  reader.onload = function(evt){
-    const lines = evt.target.result.trim().split('\n');
-    const headers = lines[0].split(',').map(h=>h.trim());
-    const rows = lines.slice(1).map(l=>{
-      const vals = l.split(',');
+  reader.onload = function (evt) {
+    let text = evt.target.result;
+
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+    const lines = text.replace(/\r\n/g, '\n').trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
+
+    const rows = dataRows.map(line => {
+      const vals = line.split(',').map(v => v.trim());
       const obj = {};
-      headers.forEach((h,i)=>obj[h]=vals[i]);
+      headers.forEach((h, i) => obj[h] = vals[i]);
       return obj;
     });
-    const formatted = rows.map(row=>{
-      const newRow = { name: row["Module Name"] || row.name || "Module" };
-      STATS.forEach(s=>newRow[s]=Number(row[s]||0));
+
+    const formatted = rows.map(row => {
+      const nameKey = Object.keys(row).find(k => k.toLowerCase().includes('module name')) || 'name';
+      const newRow = { name: row[nameKey] || 'Module' };
+      STATS.forEach(s => {
+        newRow[s] = Number((row[s] || "0").trim());
+      });
       return newRow;
     });
-    root.render(e(App,{initialData:formatted}));
+
+    console.log("✅ Parsed rows:", formatted);
+    // Update the existing App state instead of re-rendering
+    if (window.loadCSVData) window.loadCSVData(formatted);
   };
+
   reader.readAsText(file);
 });
 

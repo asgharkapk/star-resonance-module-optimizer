@@ -137,6 +137,24 @@ const PRESETS = {
   "Frost Mage Frostbeam": ["DMG Stack","Life Wave","Elite Strike","Cast Focus","Intellect Boost","Crit Focus"],
   "Stormblade Iaido Slash": ["DMG Stack","Elite Strike","Crit Focus","Agility Boost","Special Attack"]
 };
+const PRESET_ICONS = {
+  "Stormblade Moonstrike": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sickleget.webp",
+  "Marksman Wildpack": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_petbig.webp",
+  "Marksman Falconry": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skyhitget.webp",
+  "Beat Performer Dissonance": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1308.webp",
+  "Beat Performer Concerto": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1317.webp",
+  "Shield Knight Recovery": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1208.webp",
+  "Shield Knight Shield": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1218.webp",
+  "Heavy Guardian Earthfort": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_shieldcounter.webp",
+  "Heavy Guardian Block": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_inspireex.webp",
+  "Verdant Oracle Smite": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aoyitrigger.webp",
+  "Verdant Oracle Lifebind": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_healringget.webp",
+  "Wind Knight Vanguard": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_backhitget.webp",
+  "Wind Knight Skyward": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_flyhitget.webp",
+  "Frost Mage Icicle": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skilltriggericearrow.webp",
+  "Frost Mage Frostbeam": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icespearget.webp",
+  "Stormblade Iaido Slash": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_joy.webp"
+};
 
 const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
 
@@ -206,7 +224,74 @@ function App(props){
     });
     setVisibleStats(newVisibleStats); // <-- triggers re-render
   }
-
+  function PresetDropdown({ presets, onSelect }) {
+    const [open, setOpen] = React.useState(false);
+    const [selected, setSelected] = React.useState("");
+  
+    const handleSelect = (name) => {
+      setSelected(name);
+      onSelect(name);
+      setOpen(false);
+    };
+  
+    return e('div', { style: { position: 'relative', display: 'inline-block', width: '280px' } },
+      // Selected item
+      e('div', {
+        style: {
+          padding: '8px 12px',
+          borderRadius: '8px',
+          border: '1px solid #0a64ad',
+          background: '#f0f8ff',
+          color: '#0a64ad',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          cursor: 'pointer',
+          userSelect: 'none',
+        },
+        onClick: () => setOpen(!open)
+      },
+        selected || '-- Select a Guide --'
+      ),
+      // Dropdown list
+      open && e('div', {
+        style: {
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          maxHeight: '250px',
+          overflowY: 'auto',
+          border: '1px solid #0a64ad',
+          background: '#000',        // <-- black background
+          color: '#fff',             // <-- white text
+          zIndex: 100,
+          borderRadius: '6px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.5)'
+        }
+      },
+        Object.keys(presets).map(name => {
+          const icon = PRESET_ICONS[name] || '';
+          return e('div', {
+            key: name,
+            onClick: () => handleSelect(name),
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              padding: '6px 10px',
+              cursor: 'pointer',
+              color: '#fff',          // white text inside each item
+            },
+            onMouseEnter: e => e.currentTarget.style.background = '#333',
+            onMouseLeave: e => e.currentTarget.style.background = 'transparent'
+          },
+            e('img', { src: icon, width: 24, height: 24, style: { marginRight: '8px' } }),
+            name
+          )
+        })
+      )
+    )
+  }
+  
   React.useEffect(() => {
     // Expose a function globally to update CSV
     window.loadCSVData = (formatted) => {
@@ -370,31 +455,16 @@ function App(props){
     ),
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
       e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, 'Presets based on Maxroll Build Guides:'),
-      e('select', {
-        style:{
-          padding:'8px 12px',
-          borderRadius:'8px',
-          border:'1px solid #0a64ad',
-          background:'#f0f8ff',
-          color:'#0a64ad',
-          fontWeight:'bold',
-          fontSize:'14px',
-          cursor:'pointer',
-          outline:'none',
-          transition:'0.3s'
-        },
-        onChange: (e) => {
-          const presetName = e.target.value;
+      // Custom dropdown
+      e(PresetDropdown, {
+        presets: PRESETS,
+        onSelect: presetName => {
           const statsToSelect = PRESETS[presetName] || [];
           const newVisibleStats = {};
           STATS.forEach(stat => { newVisibleStats[stat] = statsToSelect.includes(stat); });
           setVisibleStats(newVisibleStats);
-        },
-        defaultValue: ''
-      },
-        e('option', { value:'', disabled:true }, '-- Select a Guide --'),
-        Object.keys(PRESETS).map(name => e('option', { key:name, value:name }, name))
-      )
+        }
+      })
     ),
     e('div',{className:"stats-buttons", style:{marginBottom:"8px", display:'flex', gap:'8px', flexWrap:'wrap'}},
       e('button',{className:"btn btn-blue", onClick:selectAll},"Select All"),

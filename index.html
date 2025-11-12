@@ -335,30 +335,28 @@ function App(props){
         s
       ))
     ),
-    e('div',{className:"calc-method-toggle", style:{margin:"10px 0"}},
-      e('label',null,
-        e('input',{type:'radio', checked:calcMethod==='total', onChange:()=>setCalcMethod('total')}), " Total Level"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='highest', onChange:()=>setCalcMethod('highest')}), " Highest Levels"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='smart', onChange:()=>setCalcMethod('smart')}), " Smart Combination"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='weighted', onChange:()=>setCalcMethod('weighted')}), " Weighted Power"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='balanced', onChange:()=>setCalcMethod('balanced')}), " Balanced Mode"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='spike', onChange:()=>setCalcMethod('spike')}), " Spike Mode"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='efficiency', onChange:()=>setCalcMethod('efficiency')}), " Efficiency Mode"
-      ),
-      e('label',{style:{marginLeft:"20px"}},
-        e('input',{type:'radio', checked:calcMethod==='synergy', onChange:()=>setCalcMethod('synergy')}), " Synergy Mode"
+    e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
+      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
+        e('label',{key:method, style:{
+            cursor:'pointer',
+            padding:'6px 12px',
+            borderRadius:'6px',
+            background: calcMethod===method ? 'linear-gradient(90deg,#0a64ad,#00aaff)' : '#f0f0f0',
+            color: calcMethod===method ? '#fff' : '#333',
+            fontWeight:'bold',
+            transition:'0.3s',
+            userSelect:'none'
+          }},
+          e('input',{type:'radio', checked:calcMethod===method, onChange:()=>setCalcMethod(method), style:{display:'none'}}),
+          method === 'total' ? 'Total Level' :
+          method === 'highest' ? 'Highest Levels' :
+          method === 'smart' ? 'Smart Combination' :
+          method === 'weighted' ? 'Weighted Power' :
+          method === 'balanced' ? 'Balanced Mode' :
+          method === 'spike' ? 'Spike Mode' :
+          method === 'efficiency' ? 'Efficiency Mode' :
+          'Synergy Mode'
+        )
       )
     ),
     e('table',null,

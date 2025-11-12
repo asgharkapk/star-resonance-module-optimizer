@@ -118,6 +118,25 @@ const ROLE_STATS = {
   TANK: ["Resistance","Armor","Final Protection"],
   SUPPORT: ["Cast Focus","Luck Focus","Life Steal","Team Luck & Crit"]
 };
+// Preset module selections based on Maxroll build guides
+const PRESETS = {
+  "Stormblade Moonstrike": ["DMG Stack","Life Wave","Elite Strike","Agility Boost","Attack SPD"],
+  "Marksman Wildpack": ["Crit Focus","Attack SPD","DMG Stack","Life Wave","Agility Boost","Elite Strike"],
+  "Marksman Falconry": ["Agility Boost","Crit Focus","DMG Stack","Elite Strike","Attack SPD","Life Wave"],
+  "Beat Performer Dissonance": ["Life Wave","DMG Stack","Attack SPD","Intellect Boost","Elite Strike","Team Luck & Crit"],
+  "Beat Performer Concerto": ["Life Wave","Life Condense","Healing Enhance","Healing Boost","Crit Focus","Team Luck & Crit"],
+  "Shield Knight Recovery": ["Final Protection","Resistance","Armor","Crit Focus","Life Wave"],
+  "Shield Knight Shield": ["Final Protection","Attack SPD","Resistance","Armor"],
+  "Heavy Guardian Earthfort": ["Final Protection","Resistance","Life Wave","Armor","Crit Focus"],
+  "Heavy Guardian Block": ["Final Protection","Armor","Resistance","Life Wave"],
+  "Verdant Oracle Smite": ["Life Wave","DMG Stack","Cast Focus","Intellect Boost","Elite Strike","Team Luck & Crit"],
+  "Verdant Oracle Lifebind": ["Life Wave","Life Condense","Healing Enhance","Crit Focus","Cast Focus","Team Luck & Crit"],
+  "Wind Knight Vanguard": ["DMG Stack","Elite Strike","Strength Boost","Attack SPD","Life Wave","Crit Focus"],
+  "Wind Knight Skyward": ["DMG Stack","Elite Strike","Strength Boost","Attack SPD","Life Wave","Crit Focus","Luck Focus"],
+  "Frost Mage Icicle": ["DMG Stack","Life Wave","Elite Strike","Intellect Boost","Crit Focus","Special Attack"],
+  "Frost Mage Frostbeam": ["DMG Stack","Life Wave","Elite Strike","Cast Focus","Intellect Boost","Crit Focus"],
+  "Stormblade Iaido Slash": ["DMG Stack","Elite Strike","Crit Focus","Agility Boost","Special Attack"]
+};
 
 const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
 
@@ -177,6 +196,16 @@ function App(props){
   }
   const handleRemoveRow = (i)=>setData(data.filter((_,idx)=>idx!==i));
   const toggleStat = (stat)=> setVisibleStats({...visibleStats, [stat]:!visibleStats[stat]});
+
+  // Function to select a preset
+  function selectPreset(presetName) {
+    const statsToSelect = PRESETS[presetName] || [];
+    const newVisibleStats = {};
+    STATS.forEach(stat => {
+      newVisibleStats[stat] = statsToSelect.includes(stat);
+    });
+    setVisibleStats(newVisibleStats); // <-- triggers re-render
+  }
 
   React.useEffect(() => {
     // Expose a function globally to update CSV
@@ -338,6 +367,34 @@ function App(props){
     e('div',{className:"mb-2"},
       e('button',{className:"btn btn-blue", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+    e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
+      e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, 'Presets based on Maxroll Build Guides:'),
+      e('select', {
+        style:{
+          padding:'8px 12px',
+          borderRadius:'8px',
+          border:'1px solid #0a64ad',
+          background:'#f0f8ff',
+          color:'#0a64ad',
+          fontWeight:'bold',
+          fontSize:'14px',
+          cursor:'pointer',
+          outline:'none',
+          transition:'0.3s'
+        },
+        onChange: (e) => {
+          const presetName = e.target.value;
+          const statsToSelect = PRESETS[presetName] || [];
+          const newVisibleStats = {};
+          STATS.forEach(stat => { newVisibleStats[stat] = statsToSelect.includes(stat); });
+          setVisibleStats(newVisibleStats);
+        },
+        defaultValue: ''
+      },
+        e('option', { value:'', disabled:true }, '-- Select a Guide --'),
+        Object.keys(PRESETS).map(name => e('option', { key:name, value:name }, name))
+      )
     ),
     e('div',{className:"stats-buttons", style:{marginBottom:"8px", display:'flex', gap:'8px', flexWrap:'wrap'}},
       e('button',{className:"btn btn-blue", onClick:selectAll},"Select All"),

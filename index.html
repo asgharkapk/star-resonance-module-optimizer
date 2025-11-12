@@ -510,16 +510,43 @@ function App(props){
         ) : null),
         e('th',null,'Remove')
       )),
-      e('tbody',null,data.map((row,i)=>e('tr',{key:i},
-        e('td',{className:'level-6'},row.name),
-        STATS.map(s => visibleStats[s] ? e('td', { key: s, className: getLevelClass(level_for(row[s])) },
-          e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
-            e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
-            e('input', { type:'number', value: row[s], onChange: (e)=>handleChange(i,s,e.target.value), style:{width:'40px', textAlign:'center'} })
+      e('tbody', null, data.map((row, i) =>
+        e('tr', { key: i },
+          e('td', { className: 'level-6' }, row.name),
+          STATS.map(s => visibleStats[s] ? e('td', {
+            key: s,
+            className: getLevelClass(level_for(row[s]))
+          },
+            e('div', {
+              style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }
+            },
+              e('img', {
+                src: STAT_ICONS[s],
+                alt: s,
+                title: s,
+                width: 16,
+                height: 16
+              }),
+              e('input', {
+                type: 'number',
+                min: 0, // prevents negative in UI
+                value: row[s] > 0 ? row[s] : '', // hide 0
+                onChange: (e) => {
+                  const val = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
+                  handleChange(i, s, val);
+                },
+                onKeyDown: (e) => {
+                  if (e.key === '-') e.preventDefault(); // block typing '-'
+                },
+                style: { width: '40px', textAlign: 'center' }
+              })
+            )
+          ) : null),
+          e('td', null,
+            e('button', { className: "btn btn-red", onClick: () => handleRemoveRow(i) }, '✕')
           )
-        ) : null),
-        e('td',null,e('button',{className:"btn btn-red", onClick:()=>handleRemoveRow(i)},'✕'))
-      )))
+        )
+      ))
     ),
     e('div',{className:"mb-2"},
       e('button',{className:"btn btn-green", onClick:handleAddRow},'+ Add Module'),

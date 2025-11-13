@@ -458,7 +458,7 @@ function App(props){
   return e('div',null,
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
       e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, 'Presets based on Maxroll Build Guides:'),
-      // Custom dropdown
+// Custom dropdown
       e(PresetDropdown, {
         presets: PRESETS,
         onSelect: presetName => {
@@ -469,6 +469,7 @@ function App(props){
         }
       })
     ),
+// BUTTONS
     e('div',{className:"stats-buttons", style:{marginBottom:"8px", display:'flex', gap:'8px', flexWrap:'wrap'}},
       e('button',{className:"btn btn-blue", onClick:selectAll},"Select All"),
       e('button',{className:"btn btn-red", onClick:deselectAll},"Deselect All"),
@@ -477,6 +478,7 @@ function App(props){
       e('button',{className:"btn btn-green", onClick:()=>selectRole('TANK')},"TANK"),
       e('button',{className:"btn btn-green", onClick:()=>selectRole('SUPPORT')},"SUPPORT")
     ),
+// BUTTONS
     e('div',{className:"stats-toggle"},
       STATS.map(s => e('label', { key: s, style:{marginRight:"10px", whiteSpace: 'normal', textAlign:'center'} },
         e('input', { type:'checkbox', checked:visibleStats[s], onChange:()=>toggleStat(s) }),
@@ -484,6 +486,7 @@ function App(props){
         s
       ))
     ),
+// BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
       ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
         e('label',{key:method, style:{
@@ -508,8 +511,10 @@ function App(props){
         )
       )
     ),
+// TABLES
     e('table',null,
       e('thead',null,e('tr',null,
+// INPUT TABLE HEADER
         e('th',null,'Module Name'),
         STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
           e('img', { src: STAT_ICONS[s], alt: s, title: s, width:20, height:20, style:{verticalAlign:'middle', marginRight:'4px'} }),
@@ -517,6 +522,8 @@ function App(props){
         ) : null),
         e('th',null,'Remove')
       )),
+// INPUT TABLE BODY
+// body
       e('tbody', null, data.map((row, i) =>
         e('tr', { key: i },
           e('td', { className: 'level-6' }, row.name),
@@ -554,11 +561,14 @@ function App(props){
           )
         )
       ))
+// body
     ),
+// BUTTONS
     e('div',{className:"mb-2"},
       e('button',{className:"btn btn-green", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
     ),
+// OUTPUT TABLES
     bestResults.topTotal && e('div',{className:'results'},
       e('h3', null, 
         calcMethod === 'total'      ? 'Top Total Combos (Highest Sum of Levels)' :
@@ -581,10 +591,12 @@ function App(props){
             )
           ) : null)
         )),
+// body
         e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
         )))
+// body
       )
     ),
     Object.keys(bestResults.topPerStat || {}).map(stat=>{
@@ -600,15 +612,20 @@ function App(props){
             )
           ) : null)
           )),
+// body
           e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
             e('td',null,r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
           )))
+// body
         )
       )
     }),
+// OUTPUT TABLES
     bestResults.balanced && e('div',{className:'results'},
+// HEADER
       e('h3',null,'Best Balanced combos (maximize min level)'),
+// body
       e('table',null,
         e('thead',null,e('tr',null,
           e('th',null,'Modules'),
@@ -624,6 +641,7 @@ function App(props){
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null)
         )))
       )
+// body
     )
   );
 }

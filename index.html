@@ -552,7 +552,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
   // Render
   return e('div',null,
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
-      e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, 'Presets based on Maxroll Build Guides:'),
+      e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, ['Presets based on ', e('a', { href: 'https://maxroll.gg/blue-protocol/build-guides', target: '_blank', rel: 'noopener noreferrer', style:{ color:'#0a64ad', textDecoration:'underline', cursor:'pointer' } }, 'Maxroll'), ' Build Guides:']),
 // Custom dropdown
       e(PresetDropdown, {
         presets: PRESETS,

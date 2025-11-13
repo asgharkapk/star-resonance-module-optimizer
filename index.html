@@ -405,7 +405,10 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     const results = [];
     allComb.forEach(combo=>{
       const sums = {}; const lvls = {};
-      STATS.forEach(s=>{ sums[s]=combo.reduce((acc,m)=>acc+m[s],0); lvls[s]=level_for(sums[s]); });
+      STATS.filter(s => visibleStats[s]).forEach(s => { // only visible stats
+        sums[s] = combo.reduce((acc,m)=>acc+m[s],0);
+        lvls[s] = level_for(sums[s]);
+      });
       const min_lvl = Math.min(...Object.values(lvls));
       results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
     });
@@ -544,7 +547,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     setBestResults({topPerStat, topTotal, balanced});
     window.bestResultsGlobal = {topPerStat, topTotal, balanced};
     window.appData = data;
-  },[data,calcMethod]);
+  },[data, calcMethod, visibleStats, ignoreHidden]); // ✅ added visibleStats + ignoreHidden
 
   // Render
   return e('div',null,

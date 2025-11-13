@@ -210,6 +210,8 @@ function App(props){
   const deselectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=false; return acc;},{}));
   const selectRole = (role) => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=ROLE_STATS[role].includes(s); return acc;},{}));
 
+  const [ignoreHidden, setIgnoreHidden] = React.useState(true); // default ON
+
   // Data handlers
   const handleChange = (i,key,val)=>{
     const copy = [...data]; copy[i][key] = key==="name"? val : Number(val)||0; setData(copy);
@@ -275,13 +277,14 @@ const ATTR_NAME_TYPE_MAP = {
 };
 
 // Function to compute solution.score
-function calculateSolutionScore(modules) {
-  // Aggregate attributes across all module parts
+function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
+// Aggregate attributes across all module parts
   const attrBreakdown = {};
-    // Each module is a flat object: { name, "Strength Boost": 5, ... }
-
+  
+// Each module is a flat object: { name, "Strength Boost": 5, ... }
   for (const module of modules) {
     for (const attrName of STATS) {
+      if (ignoreHidden && visibleStatsMap && !visibleStatsMap[attrName]) continue;
       attrBreakdown[attrName] = (attrBreakdown[attrName] || 0) + (module[attrName] || 0);
     }
   }
@@ -575,6 +578,61 @@ function calculateSolutionScore(modules) {
         s
       ))
     ),
+// Checkbox toggle in render
+    e('div', {
+      style: {
+        border: '2px solid #673AB7',
+        borderRadius: '12px',
+        padding: '10px 12px',
+        display: 'flex',
+        alignItems: 'center',
+        maxWidth: '500px',
+        gap: '10px'
+      }
+    },
+      // Small toggle button
+      e('label', { style: { display: 'flex', alignItems: 'center', cursor: 'pointer' }, title: 'Toggle to ignore hidden stats in calculations' },
+        e('input', {
+          type: 'checkbox',
+          checked: ignoreHidden,
+          onChange: () => setIgnoreHidden(!ignoreHidden),
+          style: { display: 'none' }
+        }),
+        e('span', {
+          style: {
+            width: '36px',               // smaller toggle
+            height: '18px',              // smaller height
+            background: ignoreHidden ? '#673AB7' : '#ccc',
+            borderRadius: '9px',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: ignoreHidden ? 'flex-end' : 'flex-start',
+            padding: '2px',
+            transition: 'background 0.3s'
+          }
+        },
+          e('span', {
+            style: {
+              width: '14px',             // smaller knob
+              height: '14px',
+              background: '#fff',
+              borderRadius: '50%',
+              transition: 'all 0.3s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            }
+          })
+        )
+      ),
+    
+      // Text + details first
+      e('div', { style: { fontSize: '16px', fontWeight: 'bold', color: '#333' } },
+        'Ignore hidden stats:',
+        e('span', { style: { fontSize: '12px', color: '#555', marginLeft: '6px' } },
+          'Hidden stats will not count in calculations'
+        )
+      )
+    ),
 // BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
       ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
@@ -685,7 +743,7 @@ function calculateSolutionScore(modules) {
         e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)) )) // SCORE CALCULATOR
+          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
         )))
 // body
       )
@@ -708,7 +766,7 @@ function calculateSolutionScore(modules) {
           e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
             e('td',null,r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)) )) // SCORE CALCULATOR
+          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
           )))
 // body
         )
@@ -733,7 +791,7 @@ function calculateSolutionScore(modules) {
         e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)) )) // SCORE CALCULATOR
+          e('td', null, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
         )))
       )
 // body

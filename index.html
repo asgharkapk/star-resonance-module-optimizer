@@ -633,7 +633,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     window.appData = data;
   },[data, calcMethod, visibleStats, ignoreHidden, targetLevels]); // ✅ added visibleStats + ignoreHidden
 
-  // Render
+// Render START
   return e('div',null,
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
       e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, ['Presets based on ', e('a', { href: 'https://maxroll.gg/blue-protocol/build-guides', target: '_blank', rel: 'noopener noreferrer', style:{ color:'#0a64ad', textDecoration:'underline', cursor:'pointer' } }, 'Maxroll'), ' Build Guides:']),
@@ -777,8 +777,18 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       e('button',{className:"btn btn-green", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
     ),
-// HEADER
-      e('h4',null,'[At leaset select one Stat and At least Add 4 modules.]'),
+// WARNING
+    (() => {
+      const selectedCount = STATS.filter(s => visibleStats[s]).length;
+      const moduleCount = data.length; // use your state variable
+    
+      if (selectedCount < 1 || moduleCount < 4) {
+        return e('h4', { style: { color: 'red', margin: '8px 0' } },
+          '[At least select one stat and add at least 4 modules.]'
+        );
+      }
+      return null;
+    })(),
 // BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
       ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore','targetLevel'].map(method =>

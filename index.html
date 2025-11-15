@@ -257,7 +257,7 @@ function App(props){
 
   const [ignoreHidden, setIgnoreHidden] = React.useState(true); // default ON
 
-  const [targetLevels, setTargetLevels] = React.useState(STATS.reduce((acc, s) => { acc[s] = 0; return acc; }, {})); //TARGETLEVEL
+  const [targetLevels, setTargetLevels] = React.useState(Object.fromEntries(STATS.map(s => [s, null]))); //TARGETLEVEL
 
   // Data handlers
   const handleChange = (i,key,val)=>{
@@ -595,30 +595,44 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         });
     } else if (calcMethod === 'targetLevel') {
         topTotal.sort((a, b) => {
+      
           const modulesA = data.filter(m => a.combo.split(',').includes(m.name));
           const modulesB = data.filter(m => b.combo.split(',').includes(m.name));
-        
-          let scoreA = 0, scoreB = 0;
+      
+          let diffA = 0, diffB = 0;
           const lvlsA = {}, lvlsB = {};
-        
+      
           STATS.forEach(s => {
-            if(visibleStats[s]) {
-              const sumA = modulesA.reduce((acc,m)=>acc+m[s],0);
-              const sumB = modulesB.reduce((acc,m)=>acc+m[s],0);
-        
-              // Calculate level for target mode
-              lvlsA[s] = Math.min(level_for(sumA), targetLevels[s]); // clamp to target
-              lvlsB[s] = Math.min(level_for(sumB), targetLevels[s]); // clamp to target
-        
-              scoreA += lvlsA[s];
-              scoreB += lvlsB[s];
+      
+            // ALWAYS compute actual module levels (never hide or change)
+            const sumA = modulesA.reduce((acc, m) => acc + m[s], 0);
+            const sumB = modulesB.reduce((acc, m) => acc + m[s], 0);
+      
+            const actualA = level_for(sumA);
+            const actualB = level_for(sumB);
+      
+            lvlsA[s] = actualA;
+            lvlsB[s] = actualB;
+      
+            // Optional target: only affects sorting, not level value
+            const target = targetLevels[s];
+      
+            // do not hide or skip level — only ignore for scoring
+            if (target === null || target === undefined || !visibleStats[s]) {
+              return; // skip scoring this stat only
             }
+      
+            // diff scoring (closest level to target)
+            diffA += Math.abs(target - actualA);
+            diffB += Math.abs(target - actualB);
           });
-        
-          a.lvls = lvlsA; // update levels used for rendering
+      
+          // Store all real levels for UI
+          a.lvls = lvlsA;
           b.lvls = lvlsB;
-        
-          return scoreB - scoreA; // highest combo closer to target first
+      
+          // lower diff = better
+          return diffA - diffB;
         });
     }
     topTotal = topTotal.slice(0,10);
@@ -821,38 +835,55 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       )
     ),
 //targetlevel
-    calcMethod === 'targetLevel' && e('div', { style: { margin:'12px 0', border:'2px solid #009688', borderRadius:'8px', padding:'8px' } },
+    calcMethod === 'targetLevel' && 
+    e('div', { style: { margin:'12px 0', border:'2px solid #009688', borderRadius:'8px', padding:'8px' } },
+    
       e('h4', null, 'Set Target Levels for Each Stat'),
+    
       e('table', null,
         e('thead', null,
           e('tr', null,
             e('th', { style:{whiteSpace:'normal', textAlign:'center'} }, 'Target Stat'), // first column
-            STATS.map(s => visibleStats[s] ? e('th', { key:s, style:{whiteSpace:'normal', textAlign:'center'} },
-              e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
-                e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
-                s
+            STATS.map(s => visibleStats[s] ? 
+              e('th', { key:s, style:{whiteSpace:'normal', textAlign:'center'} },
+                e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+                  e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                  s
+                )
               )
-            ) : null)
+            : null)
           )
         ),
+    
         e('tbody', null,
           e('tr', null,
             e('td', { style:{fontWeight:'bold', textAlign:'center'} }, 'Target Level'), // first column per row
-            STATS.map(s => visibleStats[s] ? e('td', { key:s },
-              e('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', gap:'4px' } },
-                e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
-                e('input', {
-                  type:'number',
-                  min:0,
-                  max:6,
-                  value: targetLevels[s],
-                  onChange: e => setTargetLevels({ ...targetLevels, [s]: Number(e.target.value)||0 }),
-                  style:{ width:'40px', textAlign:'center' }
-                })
+            STATS.map(s => visibleStats[s] ?
+              e('td', { key:s },
+                e('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', gap:'4px' } },
+                  e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                  e('input', {
+                    type:'number',
+                    min:0,
+                    max:6,
+                    value: targetLevels[s] ?? '',
+                    onChange: e => {
+                      const raw = e.target.value;
+                      const val = raw === '' ? null : Number(raw);  
+                      setTargetLevels({ ...targetLevels, [s]: val });
+                    },
+                    style:{ width:'40px', textAlign:'center' }
+                  })
+                )
               )
-            ) : null)
+            : null)
           )
         )
+      ),
+    
+      // Explanation line
+      e('div', { style:{ marginTop:'8px', fontStyle:'italic', color:'#333', textAlign:'center' } },
+        'Leaving a field empty makes that stat optional. Entering 0 means targeting level 0 (or closest).'
       )
     ),
 //targetlevel

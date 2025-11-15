@@ -255,6 +255,8 @@ function App(props){
 
   const [ignoreHidden, setIgnoreHidden] = React.useState(true); // default ON
 
+  const [targetLevels, setTargetLevels] = React.useState(STATS.reduce((acc, s) => { acc[s] = 0; return acc; }, {})); //TARGETLEVEL
+
   // Data handlers
   const handleChange = (i,key,val)=>{
     const copy = [...data]; copy[i][key] = key==="name"? val : Number(val)||0; setData(copy);
@@ -589,6 +591,33 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       
           return scoreB - scoreA; // highest score first
         });
+    } else if (calcMethod === 'targetLevel') {
+        topTotal.sort((a, b) => {
+          const modulesA = data.filter(m => a.combo.split(',').includes(m.name));
+          const modulesB = data.filter(m => b.combo.split(',').includes(m.name));
+        
+          let scoreA = 0, scoreB = 0;
+          const lvlsA = {}, lvlsB = {};
+        
+          STATS.forEach(s => {
+            if(visibleStats[s]) {
+              const sumA = modulesA.reduce((acc,m)=>acc+m[s],0);
+              const sumB = modulesB.reduce((acc,m)=>acc+m[s],0);
+        
+              // Calculate level for target mode
+              lvlsA[s] = Math.min(level_for(sumA), targetLevels[s]); // clamp to target
+              lvlsB[s] = Math.min(level_for(sumB), targetLevels[s]); // clamp to target
+        
+              scoreA += lvlsA[s];
+              scoreB += lvlsB[s];
+            }
+          });
+        
+          a.lvls = lvlsA; // update levels used for rendering
+          b.lvls = lvlsB;
+        
+          return scoreB - scoreA; // highest combo closer to target first
+        });
     }
     topTotal = topTotal.slice(0,10);
 
@@ -602,7 +631,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     setBestResults({topPerStat, topTotal, balanced});
     window.bestResultsGlobal = {topPerStat, topTotal, balanced};
     window.appData = data;
-  },[data, calcMethod, visibleStats, ignoreHidden]); // ✅ added visibleStats + ignoreHidden
+  },[data, calcMethod, visibleStats, ignoreHidden, targetLevels]); // ✅ added visibleStats + ignoreHidden
 
   // Render
   return e('div',null,
@@ -752,7 +781,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       e('h4',null,'[At leaset select one Stat and At least Add 4 modules.]'),
 // BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
-      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore'].map(method =>
+      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore','targetLevel'].map(method =>
         e('label',{key:method, style:{
             cursor:'pointer',
             padding:'6px 12px',
@@ -772,22 +801,59 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           method === 'spike' ? 'Spike Mode' :
           method === 'efficiency' ? 'Efficiency Mode' :
           method === 'synergy' ? 'Synergy Mode' :
-          'Ability Score Mode'
+          method === 'abilityScore' ? 'Ability Score Mode' :
+          'Target Level Mode'
         )
       )
     ),
+//targetlevel
+    calcMethod === 'targetLevel' && e('div', { style: { margin:'12px 0', border:'2px solid #009688', borderRadius:'8px', padding:'8px' } },
+      e('h4', null, 'Set Target Levels for Each Stat'),
+      e('table', null,
+        e('thead', null,
+          e('tr', null,
+            e('th', { style:{whiteSpace:'normal', textAlign:'center'} }, 'Target Stat'), // first column
+            STATS.map(s => visibleStats[s] ? e('th', { key:s, style:{whiteSpace:'normal', textAlign:'center'} },
+              e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+                e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                s
+              )
+            ) : null)
+          )
+        ),
+        e('tbody', null,
+          e('tr', null,
+            e('td', { style:{fontWeight:'bold', textAlign:'center'} }, 'Target Level'), // first column per row
+            STATS.map(s => visibleStats[s] ? e('td', { key:s },
+              e('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', gap:'4px' } },
+                e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                e('input', {
+                  type:'number',
+                  min:0,
+                  value: targetLevels[s],
+                  onChange: e => setTargetLevels({ ...targetLevels, [s]: Number(e.target.value)||0 }),
+                  style:{ width:'40px', textAlign:'center' }
+                })
+              )
+            ) : null)
+          )
+        )
+      )
+    ),
+//targetlevel
 // OUTPUT TABLES
     bestResults.topTotal && e('div',{className:'results'},
       e('h3', null, 
-        calcMethod === 'total'      ? 'Top Total Combos (Highest Sum of Levels)' :
-        calcMethod === 'highest'    ? 'Top Combos (Most High-Level Stats)' :
-        calcMethod === 'smart'      ? 'Smart Combination Results (Weighted Hybrid Ranking)' :
-        calcMethod === 'weighted'   ? 'Weighted Power Mode (Exponential Level Value)' :
-        calcMethod === 'balanced'   ? 'Balanced Mode (Even Stat Distribution)' :
-        calcMethod === 'spike'      ? 'Spike Mode (Specialized Peak Stats)' :
-        calcMethod === 'efficiency' ? 'Efficiency Mode (Best Value per High Stat)' :
-        calcMethod === 'synergy'    ? 'Synergy Mode (Complementary Stat Combos)' :
-        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-Game Scoring)' :
+        calcMethod === 'total'      ? 'Top Total Combos (Combos ranked by the sum of all stat levels, maximizing overall stat coverage)' :
+        calcMethod === 'highest'    ? 'Top Combos (Combos ranked by number of high-level stats, prioritizing modules with more top-tier stats)' :
+        calcMethod === 'smart'      ? 'Smart Combination Results (Hybrid ranking: prioritizes high-level stats first, then total levels, then raw stat values for tie-breaking)' :
+        calcMethod === 'weighted'   ? 'Weighted Power Mode (Exponential weighting of stat levels, giving more importance to higher-level stats)' :
+        calcMethod === 'balanced'   ? 'Balanced Mode (Ranks combos by even distribution of stats, minimizing variance between stat levels)' :
+        calcMethod === 'spike'      ? 'Spike Mode (Focuses on maximizing a single peak stat, then total levels as tie-breaker)' :
+        calcMethod === 'efficiency' ? 'Efficiency Mode (Optimizes raw stat sum per number of high-level stats, rewarding combos with more value per high-level stat)' :
+        calcMethod === 'synergy'    ? 'Synergy Mode (Ranks combos based on complementary stat pairs, rewarding combinations that work well together)' :
+        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-game scoring: calculates official game ability score based on visible stats and thresholds)' :
+        calcMethod === 'targetLevel'    ? 'Target Level Mode (Ranks combos by closeness to your custom target levels for each stat, capping each stat at its target)' :
         'Top Combos'
       ),
       e('table',null,

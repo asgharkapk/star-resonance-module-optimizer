@@ -679,31 +679,6 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         )
       )
     ),
-// BUTTONS
-    e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
-      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
-        e('label',{key:method, style:{
-            cursor:'pointer',
-            padding:'6px 12px',
-            borderRadius:'6px',
-            background: calcMethod===method ? 'linear-gradient(90deg,#0a64ad,#00aaff)' : '#f0f0f0',
-            color: calcMethod===method ? '#fff' : '#333',
-            fontWeight:'bold',
-            transition:'0.3s',
-            userSelect:'none'
-          }},
-          e('input',{type:'radio', checked:calcMethod===method, onChange:()=>setCalcMethod(method), style:{display:'none'}}),
-          method === 'total' ? 'Total Level' :
-          method === 'highest' ? 'Highest Levels' :
-          method === 'smart' ? 'Smart Combination' :
-          method === 'weighted' ? 'Weighted Power' :
-          method === 'balanced' ? 'Balanced Mode' :
-          method === 'spike' ? 'Spike Mode' :
-          method === 'efficiency' ? 'Efficiency Mode' :
-          'Synergy Mode'
-        )
-      )
-    ),
 // TABLES
     e('table',null,
       e('thead',null,e('tr',null,
@@ -760,6 +735,33 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     e('div',{className:"mb-2"},
       e('button',{className:"btn btn-green", onClick:handleAddRow},'+ Add Module'),
       e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+// HEADER
+      e('h4',null,'[At leaset select one Stat and At least Add 4 modules.]'),
+// BUTTONS
+    e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
+      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
+        e('label',{key:method, style:{
+            cursor:'pointer',
+            padding:'6px 12px',
+            borderRadius:'6px',
+            background: calcMethod===method ? 'linear-gradient(90deg,#0a64ad,#00aaff)' : '#f0f0f0',
+            color: calcMethod===method ? '#fff' : '#333',
+            fontWeight:'bold',
+            transition:'0.3s',
+            userSelect:'none'
+          }},
+          e('input',{type:'radio', checked:calcMethod===method, onChange:()=>setCalcMethod(method), style:{display:'none'}}),
+          method === 'total' ? 'Total Level' :
+          method === 'highest' ? 'Highest Levels' :
+          method === 'smart' ? 'Smart Combination' :
+          method === 'weighted' ? 'Weighted Power' :
+          method === 'balanced' ? 'Balanced Mode' :
+          method === 'spike' ? 'Spike Mode' :
+          method === 'efficiency' ? 'Efficiency Mode' :
+          'Synergy Mode'
+        )
+      )
     ),
 // OUTPUT TABLES
     bestResults.topTotal && e('div',{className:'results'},

@@ -840,6 +840,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
                 e('input', {
                   type:'number',
                   min:0,
+                  max:6,
                   value: targetLevels[s],
                   onChange: e => setTargetLevels({ ...targetLevels, [s]: Number(e.target.value)||0 }),
                   style:{ width:'40px', textAlign:'center' }

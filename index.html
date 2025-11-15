@@ -788,7 +788,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     
       if (selectedCount < 1 || moduleCount < 4) {
         return e('h4', { style: { color: 'red', margin: '8px 0' } },
-          '[At least select one stat and add at least 4 modules.]'
+          '[Oops! You need at least one stat selected and a minimum of four modules.]'
         );
       }
       return null;

@@ -577,6 +577,18 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     
         return (baseB+synB*2) - (baseA+synA*2);
       });
+    } else if (calcMethod === 'abilityScore') {
+        topTotal.sort((a, b) => {
+      
+          // Convert combo "M1,M2,M3,M4" back into real modules:
+          const modulesA = data.filter(m => a.combo.split(',').includes(m.name));
+          const modulesB = data.filter(m => b.combo.split(',').includes(m.name));
+      
+          const scoreA = calculateSolutionScore(modulesA, visibleStats, ignoreHidden);
+          const scoreB = calculateSolutionScore(modulesB, visibleStats, ignoreHidden);
+      
+          return scoreB - scoreA; // highest score first
+        });
     }
     topTotal = topTotal.slice(0,10);
 
@@ -740,7 +752,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       e('h4',null,'[At leaset select one Stat and At least Add 4 modules.]'),
 // BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
-      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
+      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore'].map(method =>
         e('label',{key:method, style:{
             cursor:'pointer',
             padding:'6px 12px',
@@ -759,7 +771,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           method === 'balanced' ? 'Balanced Mode' :
           method === 'spike' ? 'Spike Mode' :
           method === 'efficiency' ? 'Efficiency Mode' :
-          'Synergy Mode'
+          method === 'synergy' ? 'Synergy Mode' :
+          'Ability Score Mode'
         )
       )
     ),
@@ -774,6 +787,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         calcMethod === 'spike'      ? 'Spike Mode (Specialized Peak Stats)' :
         calcMethod === 'efficiency' ? 'Efficiency Mode (Best Value per High Stat)' :
         calcMethod === 'synergy'    ? 'Synergy Mode (Complementary Stat Combos)' :
+        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-Game Scoring)' :
         'Top Combos'
       ),
       e('table',null,

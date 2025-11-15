@@ -166,7 +166,9 @@ const ROLE_STATS = {
   DPS: ["Strength Boost","Agility Boost","Intellect","Special Attack","Elite Strike","Attack SPD","Crit Focus","DMG Stack","Agile"],
   HEALER: ["Healing Boost","Healing Enhance","First Aid","Life Condense","Life Wave"],
   TANK: ["Resistance","Armor","Final Protection"],
-  SUPPORT: ["Cast Focus","Luck Focus","Life Steal","Team Luck & Crit"]
+  SUPPORT: ["Cast Focus","Luck Focus","Life Steal","Team Luck & Crit"],
+  BASIC: ["Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike","Healing Boost","Healing Enhance","Cast Focus","Attack SPD","Crit Focus","Luck Focus","Resistance","Armor"],
+  SPECIAL: ["DMG Stack","Agile","Life Condense","First Aid","Life Wave","Life Steal","Team Luck & Crit","Final Protection"]
 };
 // Preset module selections based on Maxroll build guides
 const PRESETS = {
@@ -655,7 +657,9 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       e('button',{className:"btn btn-green", onClick:()=>selectRole('DPS')},"DPS"),
       e('button',{className:"btn btn-green", onClick:()=>selectRole('HEALER')},"HEALER"),
       e('button',{className:"btn btn-green", onClick:()=>selectRole('TANK')},"TANK"),
-      e('button',{className:"btn btn-green", onClick:()=>selectRole('SUPPORT')},"SUPPORT")
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('SUPPORT')},"SUPPORT"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('BASIC')},"BASIC"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('SPECIAL')},"SPECIAL")
     ),
 // BUTTONS
     e('div',{className:"stats-toggle"},

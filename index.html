@@ -115,13 +115,38 @@ input[name="name"]{ width:120px; }
   margin: 0 auto;
   padding: 0 10px;
 }
-  
+
+.theme-selector {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+}
+
+.theme-selector select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-gray);
+  font-size: 14px;
+}
+
 </style>
 </head>
 <body>
 <div class="container">
 <h1>Blue Protocol Module Calculator</h1>
 
+<div class="theme-selector">
+  <select id="themeDropdown">
+  <option value="light">Light Theme</option>
+  <option value="dark">Dark Theme</option>
+  <option value="blue">Blue Theme</option>
+  <option value="green">Green Theme</option>
+  <option value="red">Red Theme</option>
+  <option value="system">System Theme</option>
+  </select>
+</div>
+  
 <input type="file" id="csvInput" accept=".csv">
 <button class="btn btn-green" id="export-import">Export Imported Table CSV</button>
 <button class="btn btn-blue" id="export-all">Export All Output Tables CSV</button>
@@ -1064,6 +1089,39 @@ document.getElementById('export-all').addEventListener('click',()=>{
 
   exportCSVMultiple(tables);
 });
+
+  // Initialize dropdown based on current theme
+  const dropdown = document.getElementById("themeDropdown");
+
+  // Apply theme
+  function applyTheme(theme) {
+    if (theme === "system") {
+      document.documentElement.setAttribute(
+        "data-theme",
+        window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      );
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+  }
+  
+  // Load saved preference
+  const saved = localStorage.getItem("theme") || "system";
+  dropdown.value = saved;
+  applyTheme(saved);
+
+  // On change
+  dropdown.addEventListener("change", () => {
+    const selected = dropdown.value;
+    localStorage.setItem("theme", selected);
+    applyTheme(selected);
+  });
+
+  // Auto-update if "system" is selected
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if (dropdown.value === "system") applyTheme("system");
+  });
+
 </script>
 
 <footer style="

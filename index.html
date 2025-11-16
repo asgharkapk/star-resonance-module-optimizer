@@ -45,7 +45,7 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <style>
-/* -------------------- LIGHT THEME -------------------- */
+/* -------------------- Default Light -------------------- */
 :root[data-theme="light"] {
   /* Layout */
   --bg-main: #d4d0c8;
@@ -102,7 +102,88 @@
   --toggler-knob: white;
   --toggle-txt: #333;
   --toggle-warn: #555;
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
+
 }
+/* -------------------- Default Dark -------------------- */
+
+:root[data-theme="dark"] {
+  /* Layout */
+  --bg-main: #1c1c1c;
+  --text-main: #eee;
+
+  /* Level Colors */
+  --lvl-0: #2a2a2a;
+  --lvl-1: #7f2b2b;
+  --lvl-2: #995e3d;
+  --lvl-3: #b38600;
+  --lvl-4: #3d6b3d;
+  --lvl-5: #3a5a8c;
+  --lvl-6: #1e3f60;
+  
+  /* Preset Dropdown */
+  --dropdown-selector-border: #3399ff;
+  --dropdown-selector-bg: #2a2a2a;
+  --dropdown-selector-text: #fff;
+  --dropdown-selected-bg: #444;
+  --dropdown-bg: #111;
+  --dropdown-text: #eee;
+  --dropdown-hover: #555;
+  --dropdown-shadow: rgba(0,0,0,0.8);
+  
+  /* tables */
+  --table-border: #555;
+  --table-h-bg: #3399ff;
+  --table-h-txt: #fff;
+  --table-hover: #222;
+  
+  /* buttons */
+  --selectall-btn-bg: #3399ff;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #c00;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #007a33;
+  --preset-btn-txt: #fff;
+  
+  /* highlight */
+  --best-combo-highlight: #ffd700;
+
+  /* stats toggler */
+  --stats-base-bg: #222;
+  --stats-base-border: #3399ff;
+  --stats-lbl-bg: #2a2a2a;
+  --stats-lbl-txt: #eee;
+  --stats-lbl-border: #555;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #aa66ff;
+  
+  /* toggle button */
+  --toggle-bg-on: #aa66ff;
+  --toggle-bg-off: #555;
+  --toggler-knob: #eee;
+  --toggle-txt: #eee;
+  --toggle-warn: #aaa;
+  
+  /* methods */
+  --meth-bg: #2a2a2a;
+  --meth-text: #eee;
+  --meth-active-bg: linear-gradient(90deg, #3399ff, #00cfff);
+  --meth-active-text: #fff;
+  
+  /* target */
+  --target-border: #00bfa5;
+  --target-warn: #ff6666;
+}
+
 /* -------------------- LIGHT THEMES -------------------- */
 
 /* Windows 7 Light */
@@ -146,7 +227,17 @@
   --toggle-bg-off: #ccc;
   --toggler-knob: white;
   --toggle-txt: #333;
-  --toggle-warn: #555;
+  --toggle-warn: #555;  
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
 }
 
 /* Windows 10 Light */
@@ -190,7 +281,17 @@
   --toggle-bg-off: #ccc;
   --toggler-knob: white;
   --toggle-txt: #333;
-  --toggle-warn: #555;
+  --toggle-warn: #555; 
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
 }
 
 /* Windows 11 Light */
@@ -234,7 +335,17 @@
   --toggle-bg-off: #ccc;
   --toggler-knob: white;
   --toggle-txt: #333;
-  --toggle-warn: #555;
+  --toggle-warn: #555; 
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
 }
 
 /* -------------------- DARK THEMES -------------------- */
@@ -280,7 +391,17 @@
   --toggle-bg-off: #555;
   --toggler-knob: #eee;
   --toggle-txt: #ddd;
-  --toggle-warn: #999;
+  --toggle-warn: #999; 
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
 }
 
 /* Windows 10 Dark */
@@ -324,7 +445,17 @@
   --toggle-bg-off: #555;
   --toggler-knob: #ddd;
   --toggle-txt: #ccc;
-  --toggle-warn: #888;
+  --toggle-warn: #888; 
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
 }
 
 /* Windows 11 Dark */
@@ -368,7 +499,1193 @@
   --toggle-bg-off: #555;
   --toggler-knob: #eee;
   --toggle-txt: #ccc;
+  --toggle-warn: #888; 
+  
+  /*methods*/
+  --meth-bg: #f0f0f0;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #0a64ad, #00aaff);
+  --meth-active-text: #fff;
+  
+  /*target*/
+  --target-border: #009688;
+  --target-warn: red;
+}
+/* -------------------- Modern -------------------- */
+:root[data-theme="modern"] {
+  --bg-main: #f5f5f7;
+  --text-main: #222;
+
+  --lvl-0: #e1e1e2;
+  --lvl-1: #ffd6d6;
+  --lvl-2: #fff0cc;
+  --lvl-3: #ffffd6;
+  --lvl-4: #d6f5d6;
+  --lvl-5: #cce0ff;
+  --lvl-6: #a3c4ff;
+
+  --dropdown-selector-border: #4a90e2;
+  --dropdown-selector-bg: #ffffff;
+  --dropdown-selector-text: #333;
+  --dropdown-selected-bg: #e6f0ff;
+  --dropdown-bg: #fff;
+  --dropdown-text: #222;
+  --dropdown-hover: #cce0ff;
+  --dropdown-shadow: rgba(0,0,0,0.2);
+
+  --table-border: #aaa;
+  --table-h-bg: #4a90e2;
+  --table-h-txt: #fff;
+  --table-hover: #f0f6ff;
+
+  --selectall-btn-bg: #4a90e2;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #e53935;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #00a152;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffcc00;
+
+  --stats-base-bg: #f9f9f9;
+  --stats-base-border: #4a90e2;
+  --stats-lbl-bg: #fff;
+  --stats-lbl-txt: #222;
+  --stats-lbl-border: #ccc;
+  --stats-lbl-hover: #e6f0ff;
+  --stats-checkbox-border: #4a90e2;
+
+  --toggle-bg-on: #4a90e2;
+  --toggle-bg-off: #ddd;
+  --toggler-knob: #fff;
+  --toggle-txt: #222;
   --toggle-warn: #888;
+
+  --meth-bg: #f0f0f0;
+  --meth-text: #222;
+  --meth-active-bg: linear-gradient(90deg, #4a90e2, #00c4ff);
+  --meth-active-text: #fff;
+
+  --target-border: #009688;
+  --target-warn: #e53935;
+}
+
+/* -------------------- Neon -------------------- */
+:root[data-theme="neon"] {
+  --bg-main: #111;
+  --text-main: #0ff;
+
+  --lvl-0: #222;
+  --lvl-1: #ff00ff;
+  --lvl-2: #ff8000;
+  --lvl-3: #ffff00;
+  --lvl-4: #00ff00;
+  --lvl-5: #00ffff;
+  --lvl-6: #0080ff;
+
+  --dropdown-selector-border: #0ff;
+  --dropdown-selector-bg: #111;
+  --dropdown-selector-text: #0ff;
+  --dropdown-selected-bg: #222;
+  --dropdown-bg: #111;
+  --dropdown-text: #0ff;
+  --dropdown-hover: #333;
+  --dropdown-shadow: rgba(0,255,255,0.4);
+
+  --table-border: #0ff;
+  --table-h-bg: #0ff;
+  --table-h-txt: #111;
+  --table-hover: #222;
+
+  --selectall-btn-bg: #0ff;
+  --selectall-btn-txt: #111;
+  --clear-btn-bg: #ff0080;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #ff0;
+  --preset-btn-txt: #111;
+
+  --best-combo-highlight: #ff0;
+
+  --stats-base-bg: #111;
+  --stats-base-border: #0ff;
+  --stats-lbl-bg: #222;
+  --stats-lbl-txt: #0ff;
+  --stats-lbl-border: #0ff;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #ff0;
+
+  --toggle-bg-on: #0ff;
+  --toggle-bg-off: #333;
+  --toggler-knob: #0ff;
+  --toggle-txt: #0ff;
+  --toggle-warn: #f0f;
+  
+  --meth-bg: #222;
+  --meth-text: #0ff;
+  --meth-active-bg: linear-gradient(90deg, #0ff, #f0f);
+  --meth-active-text: #111;
+
+  --target-border: #ff0;
+  --target-warn: #ff0080;
+}
+
+/* -------------------- Gamer -------------------- */
+:root[data-theme="gamer"] {
+  --bg-main: #0f0f1a;
+  --text-main: #f0f0f5;
+
+  --lvl-0: #1a1a2e;
+  --lvl-1: #ff4d4d;
+  --lvl-2: #ff944d;
+  --lvl-3: #ffff4d;
+  --lvl-4: #4dff4d;
+  --lvl-5: #4d94ff;
+  --lvl-6: #944dff;
+
+  --dropdown-selector-border: #ff4d4d;
+  --dropdown-selector-bg: #1a1a2e;
+  --dropdown-selector-text: #fff;
+  --dropdown-selected-bg: #333;
+  --dropdown-bg: #111;
+  --dropdown-text: #f0f0f5;
+  --dropdown-hover: #222;
+  --dropdown-shadow: rgba(255,0,255,0.5);
+
+  --table-border: #555;
+  --table-h-bg: #ff4d4d;
+  --table-h-txt: #111;
+  --table-hover: #222;
+
+  --selectall-btn-bg: #ff4d4d;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #c00;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #4dff4d;
+  --preset-btn-txt: #111;
+
+  --best-combo-highlight: #ffcc00;
+
+  --stats-base-bg: #222;
+  --stats-base-border: #ff4d4d;
+  --stats-lbl-bg: #111;
+  --stats-lbl-txt: #f0f0f5;
+  --stats-lbl-border: #555;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #ff4d4d;
+
+  --toggle-bg-on: #ff4d4d;
+  --toggle-bg-off: #555;
+  --toggler-knob: #f0f0f5;
+  --toggle-txt: #fff;
+  --toggle-warn: #f55;
+
+  --meth-bg: #222;
+  --meth-text: #f0f0f5;
+  --meth-active-bg: linear-gradient(90deg, #ff4d4d, #ff944d);
+  --meth-active-text: #fff;
+
+  --target-border: #00ff88;
+  --target-warn: #ff4444;
+}
+
+/* -------------------- RGB -------------------- */
+:root[data-theme="rgb"] {
+  --bg-main: #111;
+  --text-main: #fff;
+
+  --lvl-0: #222;
+  --lvl-1: #ff0000;
+  --lvl-2: #ff8000;
+  --lvl-3: #ffff00;
+  --lvl-4: #00ff00;
+  --lvl-5: #00ffff;
+  --lvl-6: #0000ff;
+
+  --dropdown-selector-border: #ff00ff;
+  --dropdown-selector-bg: #111;
+  --dropdown-selector-text: #fff;
+  --dropdown-selected-bg: #222;
+  --dropdown-bg: #111;
+  --dropdown-text: #fff;
+  --dropdown-hover: #333;
+  --dropdown-shadow: rgba(255,255,255,0.2);
+
+  --table-border: #555;
+  --table-h-bg: #ff00ff;
+  --table-h-txt: #111;
+  --table-hover: #222;
+
+  --selectall-btn-bg: #ff0000;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #ff8000;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #00ff00;
+  --preset-btn-txt: #111;
+
+  --best-combo-highlight: #ff0;
+
+  --stats-base-bg: #111;
+  --stats-base-border: #ff00ff;
+  --stats-lbl-bg: #222;
+  --stats-lbl-txt: #fff;
+  --stats-lbl-border: #555;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #00ffff;
+
+  --toggle-bg-on: #ff00ff;
+  --toggle-bg-off: #555;
+  --toggler-knob: #fff;
+  --toggle-txt: #fff;
+  --toggle-warn: #f0f;
+
+  --meth-bg: #222;
+  --meth-text: #fff;
+  --meth-active-bg: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+  --meth-active-text: #fff;
+
+  --target-border: #00ffff;
+  --target-warn: #ff4444;
+}
+
+/* -------------------- Classic MMO -------------------- */
+:root[data-theme="classic-mmo"] {
+  --bg-main: #2b2b2b;
+  --text-main: #ddd;
+
+  --lvl-0: #3a3a3a;
+  --lvl-1: #aa4444;
+  --lvl-2: #cc8844;
+  --lvl-3: #eeee44;
+  --lvl-4: #44aa44;
+  --lvl-5: #4488aa;
+  --lvl-6: #8844aa;
+
+  --dropdown-selector-border: #888;
+  --dropdown-selector-bg: #2b2b2b;
+  --dropdown-selector-text: #fff;
+  --dropdown-selected-bg: #444;
+  --dropdown-bg: #222;
+  --dropdown-text: #ddd;
+  --dropdown-hover: #333;
+  --dropdown-shadow: rgba(0,0,0,0.5);
+
+  --table-border: #555;
+  --table-h-bg: #888;
+  --table-h-txt: #fff;
+  --table-hover: #333;
+
+  --selectall-btn-bg: #888;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #aa2222;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #228822;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffcc00;
+
+  --stats-base-bg: #333;
+  --stats-base-border: #888;
+  --stats-lbl-bg: #2b2b2b;
+  --stats-lbl-txt: #ddd;
+  --stats-lbl-border: #555;
+  --stats-lbl-hover: #444;
+  --stats-checkbox-border: #888;
+
+  --toggle-bg-on: #888;
+  --toggle-bg-off: #555;
+  --toggler-knob: #ddd;
+  --toggle-txt: #ddd;
+  --toggle-warn: #aaa;
+
+  --meth-bg: #2b2b2b;
+  --meth-text: #ddd;
+  --meth-active-bg: linear-gradient(90deg, #888, #aaa);
+  --meth-active-text: #fff;
+
+  --target-border: #00aa88;
+  --target-warn: #ff5555;
+}
+/* -------------------- Forest -------------------- */
+:root[data-theme="forest"] {
+  --bg-main: #1b2f1b;
+  --text-main: #d4f1c5;
+
+  --lvl-0: #2b422b;
+  --lvl-1: #3b6b3b;
+  --lvl-2: #5c8d5c;
+  --lvl-3: #7ab07a;
+  --lvl-4: #9cd69c;
+  --lvl-5: #b9e7b9;
+  --lvl-6: #d4f1c5;
+
+  --dropdown-selector-border: #4c774c;
+  --dropdown-selector-bg: #2b422b;
+  --dropdown-selector-text: #d4f1c5;
+  --dropdown-selected-bg: #3b6b3b;
+  --dropdown-bg: #1b2f1b;
+  --dropdown-text: #d4f1c5;
+  --dropdown-hover: #5c8d5c;
+  --dropdown-shadow: rgba(0,0,0,0.4);
+
+  --table-border: #4c774c;
+  --table-h-bg: #3b6b3b;
+  --table-h-txt: #d4f1c5;
+  --table-hover: #5c8d5c;
+
+  --selectall-btn-bg: #4c774c;
+  --selectall-btn-txt: #d4f1c5;
+  --clear-btn-bg: #7a2b2b;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #3b6b3b;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #a8e6a2;
+
+  --stats-base-bg: #2b422b;
+  --stats-base-border: #4c774c;
+  --stats-lbl-bg: #3b6b3b;
+  --stats-lbl-txt: #d4f1c5;
+  --stats-lbl-border: #5c8d5c;
+  --stats-lbl-hover: #4c774c;
+  --stats-checkbox-border: #9cd69c;
+
+  --toggle-bg-on: #3b6b3b;
+  --toggle-bg-off: #5c8d5c;
+  --toggler-knob: #d4f1c5;
+  --toggle-txt: #d4f1c5;
+  --toggle-warn: #a83232;
+
+  --meth-bg: #2b422b;
+  --meth-text: #d4f1c5;
+  --meth-active-bg: linear-gradient(90deg, #3b6b3b, #5c8d5c);
+  --meth-active-text: #fff;
+
+  --target-border: #6bbf6b;
+  --target-warn: #ff4444;
+}
+
+/* -------------------- Sunset -------------------- */
+:root[data-theme="sunset"] {
+  --bg-main: #ffecd2;
+  --text-main: #333;
+
+  --lvl-0: #fff1e6;
+  --lvl-1: #ffd1b3;
+  --lvl-2: #ffb380;
+  --lvl-3: #ff944d;
+  --lvl-4: #ff7733;
+  --lvl-5: #ff5500;
+  --lvl-6: #cc4400;
+
+  --dropdown-selector-border: #ff7733;
+  --dropdown-selector-bg: #ffe6cc;
+  --dropdown-selector-text: #333;
+  --dropdown-selected-bg: #ffb380;
+  --dropdown-bg: #ffecd2;
+  --dropdown-text: #333;
+  --dropdown-hover: #ff944d;
+  --dropdown-shadow: rgba(0,0,0,0.3);
+
+  --table-border: #ff944d;
+  --table-h-bg: #ff7733;
+  --table-h-txt: #fff;
+  --table-hover: #ffd1b3;
+
+  --selectall-btn-bg: #ff7733;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #cc3300;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #ff944d;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffdd55;
+
+  --stats-base-bg: #ffe6cc;
+  --stats-base-border: #ff7733;
+  --stats-lbl-bg: #fff1e6;
+  --stats-lbl-txt: #333;
+  --stats-lbl-border: #ffb380;
+  --stats-lbl-hover: #ff944d;
+  --stats-checkbox-border: #ff5500;
+
+  --toggle-bg-on: #ff944d;
+  --toggle-bg-off: #ffb380;
+  --toggler-knob: #fff;
+  --toggle-txt: #333;
+  --toggle-warn: #cc3300;
+
+  --meth-bg: #ffe6cc;
+  --meth-text: #333;
+  --meth-active-bg: linear-gradient(90deg, #ff7733, #ff944d);
+  --meth-active-text: #fff;
+
+  --target-border: #ff5500;
+  --target-warn: #cc0000;
+}
+
+/* -------------------- Cyberpunk -------------------- */
+:root[data-theme="cyberpunk"] {
+  --bg-main: #0d0d1a;
+  --text-main: #ff00ff;
+
+  --lvl-0: #111;
+  --lvl-1: #ff0055;
+  --lvl-2: #ff00aa;
+  --lvl-3: #ff55ff;
+  --lvl-4: #00ffff;
+  --lvl-5: #55ffff;
+  --lvl-6: #aa00ff;
+
+  --dropdown-selector-border: #ff00ff;
+  --dropdown-selector-bg: #111;
+  --dropdown-selector-text: #ff00ff;
+  --dropdown-selected-bg: #222;
+  --dropdown-bg: #0d0d1a;
+  --dropdown-text: #ff00ff;
+  --dropdown-hover: #333;
+  --dropdown-shadow: rgba(255,0,255,0.5);
+
+  --table-border: #ff00ff;
+  --table-h-bg: #ff00ff;
+  --table-h-txt: #111;
+  --table-hover: #222;
+
+  --selectall-btn-bg: #ff00ff;
+  --selectall-btn-txt: #111;
+  --clear-btn-bg: #ff0055;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #00ffff;
+  --preset-btn-txt: #111;
+
+  --best-combo-highlight: #ff0;
+
+  --stats-base-bg: #111;
+  --stats-base-border: #ff00ff;
+  --stats-lbl-bg: #222;
+  --stats-lbl-txt: #ff00ff;
+  --stats-lbl-border: #ff55ff;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #00ffff;
+
+  --toggle-bg-on: #ff00ff;
+  --toggle-bg-off: #333;
+  --toggler-knob: #ff00ff;
+  --toggle-txt: #ff00ff;
+  --toggle-warn: #ff0055;
+
+  --meth-bg: #111;
+  --meth-text: #ff00ff;
+  --meth-active-bg: linear-gradient(90deg, #ff00ff, #00ffff);
+  --meth-active-text: #111;
+
+  --target-border: #00ffff;
+  --target-warn: #ff0055;
+}
+
+/* -------------------- Desert -------------------- */
+:root[data-theme="desert"] {
+  --bg-main: #f4e3c1;
+  --text-main: #7a4f2f;
+
+  --lvl-0: #f7edd9;
+  --lvl-1: #f8e0b3;
+  --lvl-2: #f9d699;
+  --lvl-3: #fbcf7f;
+  --lvl-4: #f9b459;
+  --lvl-5: #f28f33;
+  --lvl-6: #d9770d;
+
+  --dropdown-selector-border: #d9770d;
+  --dropdown-selector-bg: #f4e3c1;
+  --dropdown-selector-text: #7a4f2f;
+  --dropdown-selected-bg: #f9d699;
+  --dropdown-bg: #f4e3c1;
+  --dropdown-text: #7a4f2f;
+  --dropdown-hover: #fbcf7f;
+  --dropdown-shadow: rgba(0,0,0,0.3);
+
+  --table-border: #d9770d;
+  --table-h-bg: #f28f33;
+  --table-h-txt: #fff;
+  --table-hover: #fbcf7f;
+
+  --selectall-btn-bg: #f28f33;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #cc5500;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #d9a955;
+  --preset-btn-txt: #7a4f2f;
+
+  --best-combo-highlight: #ffd700;
+
+  --stats-base-bg: #f4e3c1;
+  --stats-base-border: #d9770d;
+  --stats-lbl-bg: #f7edd9;
+  --stats-lbl-txt: #7a4f2f;
+  --stats-lbl-border: #f9d699;
+  --stats-lbl-hover: #fbcf7f;
+  --stats-checkbox-border: #f28f33;
+
+  --toggle-bg-on: #f28f33;
+  --toggle-bg-off: #d9a955;
+  --toggler-knob: #fff;
+  --toggle-txt: #7a4f2f;
+  --toggle-warn: #a83232;
+
+  --meth-bg: #f4e3c1;
+  --meth-text: #7a4f2f;
+  --meth-active-bg: linear-gradient(90deg, #f28f33, #f9b459);
+  --meth-active-text: #fff;
+
+  --target-border: #d9770d;
+  --target-warn: #cc3300;
+}
+
+/* -------------------- Ocean -------------------- */
+:root[data-theme="ocean"] {
+  --bg-main: #0a2239;
+  --text-main: #cce7ff;
+
+  --lvl-0: #112b4a;
+  --lvl-1: #145a96;
+  --lvl-2: #1e81b0;
+  --lvl-3: #56a5c3;
+  --lvl-4: #88c1d0;
+  --lvl-5: #a6d4e6;
+  --lvl-6: #cce7ff;
+
+  --dropdown-selector-border: #1e81b0;
+  --dropdown-selector-bg: #0a2239;
+  --dropdown-selector-text: #cce7ff;
+  --dropdown-selected-bg: #145a96;
+  --dropdown-bg: #0a2239;
+  --dropdown-text: #cce7ff;
+  --dropdown-hover: #56a5c3;
+  --dropdown-shadow: rgba(0,0,0,0.5);
+
+  --table-border: #1e81b0;
+  --table-h-bg: #145a96;
+  --table-h-txt: #fff;
+  --table-hover: #56a5c3;
+
+  --selectall-btn-bg: #145a96;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #004080;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #1e81b0;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffd700;
+
+  --stats-base-bg: #112b4a;
+  --stats-base-border: #1e81b0;
+  --stats-lbl-bg: #145a96;
+  --stats-lbl-txt: #cce7ff;
+  --stats-lbl-border: #56a5c3;
+  --stats-lbl-hover: #88c1d0;
+  --stats-checkbox-border: #a6d4e6;
+
+  --toggle-bg-on: #1e81b0;
+  --toggle-bg-off: #145a96;
+  --toggler-knob: #cce7ff;
+  --toggle-txt: #cce7ff;
+  --toggle-warn: #0077aa;
+
+  --meth-bg: #0a2239;
+  --meth-text: #cce7ff;
+  --meth-active-bg: linear-gradient(90deg, #145a96, #56a5c3);
+  --meth-active-text: #fff;
+
+  --target-border: #00aacc;
+  --target-warn: #ff4444;
+}
+/* -------------------- Neon Glow -------------------- */
+:root[data-theme="neon"] {
+  --bg-main: #0a0a0a;
+  --text-main: #39ff14;
+
+  --lvl-0: #111111;
+  --lvl-1: #ff073a;
+  --lvl-2: #ff8c00;
+  --lvl-3: #ffff00;
+  --lvl-4: #00fff7;
+  --lvl-5: #ff00ff;
+  --lvl-6: #39ff14;
+
+  --dropdown-selector-border: #39ff14;
+  --dropdown-selector-bg: #111;
+  --dropdown-selector-text: #39ff14;
+  --dropdown-selected-bg: #222;
+  --dropdown-bg: #0a0a0a;
+  --dropdown-text: #39ff14;
+  --dropdown-hover: #333;
+  --dropdown-shadow: rgba(57,255,20,0.5);
+
+  --table-border: #39ff14;
+  --table-h-bg: #222;
+  --table-h-txt: #39ff14;
+  --table-hover: #333;
+
+  --selectall-btn-bg: #39ff14;
+  --selectall-btn-txt: #0a0a0a;
+  --clear-btn-bg: #ff073a;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #00fff7;
+  --preset-btn-txt: #0a0a0a;
+
+  --best-combo-highlight: #ff00ff;
+
+  --stats-base-bg: #111;
+  --stats-base-border: #39ff14;
+  --stats-lbl-bg: #222;
+  --stats-lbl-txt: #39ff14;
+  --stats-lbl-border: #ff00ff;
+  --stats-lbl-hover: #333;
+  --stats-checkbox-border: #ff8c00;
+
+  --toggle-bg-on: #39ff14;
+  --toggle-bg-off: #333;
+  --toggler-knob: #ff00ff;
+  --toggle-txt: #39ff14;
+  --toggle-warn: #ff073a;
+
+  --meth-bg: #111;
+  --meth-text: #39ff14;
+  --meth-active-bg: linear-gradient(90deg,#ff00ff,#39ff14);
+  --meth-active-text: #0a0a0a;
+
+  --target-border: #ff00ff;
+  --target-warn: #ff073a;
+}
+
+/* -------------------- Candy -------------------- */
+:root[data-theme="candy"] {
+  --bg-main: #fff0f5;
+  --text-main: #663399;
+
+  --lvl-0: #ffe6f0;
+  --lvl-1: #ffb3c6;
+  --lvl-2: #ff80a1;
+  --lvl-3: #ff4d7f;
+  --lvl-4: #ff1a5c;
+  --lvl-5: #cc0044;
+  --lvl-6: #990033;
+
+  --dropdown-selector-border: #ff4d7f;
+  --dropdown-selector-bg: #ffe6f0;
+  --dropdown-selector-text: #663399;
+  --dropdown-selected-bg: #ffb3c6;
+  --dropdown-bg: #fff0f5;
+  --dropdown-text: #663399;
+  --dropdown-hover: #ff80a1;
+  --dropdown-shadow: rgba(204,0,68,0.4);
+
+  --table-border: #ff4d7f;
+  --table-h-bg: #ff1a5c;
+  --table-h-txt: #fff;
+  --table-hover: #ffb3c6;
+
+  --selectall-btn-bg: #ff4d7f;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #cc0044;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #ff80a1;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffccff;
+
+  --stats-base-bg: #ffe6f0;
+  --stats-base-border: #ff4d7f;
+  --stats-lbl-bg: #ffb3c6;
+  --stats-lbl-txt: #663399;
+  --stats-lbl-border: #ff80a1;
+  --stats-lbl-hover: #ff4d7f;
+  --stats-checkbox-border: #ff1a5c;
+
+  --toggle-bg-on: #ff80a1;
+  --toggle-bg-off: #ffb3c6;
+  --toggler-knob: #ffccff;
+  --toggle-txt: #663399;
+  --toggle-warn: #cc0044;
+
+  --meth-bg: #ffe6f0;
+  --meth-text: #663399;
+  --meth-active-bg: linear-gradient(90deg,#ff1a5c,#ff80a1);
+  --meth-active-text: #fff;
+
+  --target-border: #ff4d7f;
+  --target-warn: #cc0044;
+}
+
+/* -------------------- Retro 80s -------------------- */
+:root[data-theme="retro"] {
+  --bg-main: #1a1a1a;
+  --text-main: #ff9f1c;
+
+  --lvl-0: #2b2b2b;
+  --lvl-1: #ff3f1c;
+  --lvl-2: #ff9f1c;
+  --lvl-3: #ffcc00;
+  --lvl-4: #00ffcc;
+  --lvl-5: #1c66ff;
+  --lvl-6: #ff1c9f;
+
+  --dropdown-selector-border: #ff9f1c;
+  --dropdown-selector-bg: #2b2b2b;
+  --dropdown-selector-text: #ff9f1c;
+  --dropdown-selected-bg: #3b3b3b;
+  --dropdown-bg: #1a1a1a;
+  --dropdown-text: #ff9f1c;
+  --dropdown-hover: #3b3b3b;
+  --dropdown-shadow: rgba(255,159,28,0.5);
+
+  --table-border: #ff9f1c;
+  --table-h-bg: #ff3f1c;
+  --table-h-txt: #fff;
+  --table-hover: #ff9f1c;
+
+  --selectall-btn-bg: #ff9f1c;
+  --selectall-btn-txt: #1a1a1a;
+  --clear-btn-bg: #ff3f1c;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #00ffcc;
+  --preset-btn-txt: #1a1a1a;
+
+  --best-combo-highlight: #ffcc00;
+
+  --stats-base-bg: #2b2b2b;
+  --stats-base-border: #ff9f1c;
+  --stats-lbl-bg: #3b3b3b;
+  --stats-lbl-txt: #ff9f1c;
+  --stats-lbl-border: #ffcc00;
+  --stats-lbl-hover: #ff3f1c;
+  --stats-checkbox-border: #1c66ff;
+
+  --toggle-bg-on: #ff9f1c;
+  --toggle-bg-off: #3b3b3b;
+  --toggler-knob: #ffcc00;
+  --toggle-txt: #ff9f1c;
+  --toggle-warn: #ff3f1c;
+
+  --meth-bg: #2b2b2b;
+  --meth-text: #ff9f1c;
+  --meth-active-bg: linear-gradient(90deg,#ff3f1c,#ff9f1c);
+  --meth-active-text: #fff;
+
+  --target-border: #ffcc00;
+  --target-warn: #ff3f1c;
+}
+
+/* -------------------- Lava -------------------- */
+:root[data-theme="lava"] {
+  --bg-main: #2b0000;
+  --text-main: #ff4500;
+
+  --lvl-0: #330000;
+  --lvl-1: #661100;
+  --lvl-2: #992200;
+  --lvl-3: #cc3300;
+  --lvl-4: #ff5500;
+  --lvl-5: #ff7733;
+  --lvl-6: #ff9900;
+
+  --dropdown-selector-border: #ff5500;
+  --dropdown-selector-bg: #330000;
+  --dropdown-selector-text: #ff4500;
+  --dropdown-selected-bg: #661100;
+  --dropdown-bg: #2b0000;
+  --dropdown-text: #ff4500;
+  --dropdown-hover: #cc3300;
+  --dropdown-shadow: rgba(255,85,0,0.5);
+
+  --table-border: #ff5500;
+  --table-h-bg: #cc3300;
+  --table-h-txt: #fff;
+  --table-hover: #ff7733;
+
+  --selectall-btn-bg: #cc3300;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #ff2200;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #ff5500;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ffcc33;
+
+  --stats-base-bg: #330000;
+  --stats-base-border: #ff5500;
+  --stats-lbl-bg: #661100;
+  --stats-lbl-txt: #ff4500;
+  --stats-lbl-border: #cc3300;
+  --stats-lbl-hover: #ff7733;
+  --stats-checkbox-border: #ff9900;
+
+  --toggle-bg-on: #ff7733;
+  --toggle-bg-off: #cc3300;
+  --toggler-knob: #ffcc33;
+  --toggle-txt: #ff4500;
+  --toggle-warn: #ff2200;
+
+  --meth-bg: #330000;
+  --meth-text: #ff4500;
+  --meth-active-bg: linear-gradient(90deg,#cc3300,#ff7733);
+  --meth-active-text: #fff;
+
+  --target-border: #ff5500;
+  --target-warn: #ff2200;
+}
+
+/* -------------------- Galaxy -------------------- */
+:root[data-theme="galaxy"] {
+  --bg-main: #0a0a2a;
+  --text-main: #e0e0ff;
+
+  --lvl-0: #111133;
+  --lvl-1: #222266;
+  --lvl-2: #333399;
+  --lvl-3: #5555cc;
+  --lvl-4: #7777ff;
+  --lvl-5: #9999ff;
+  --lvl-6: #ccccff;
+
+  --dropdown-selector-border: #7777ff;
+  --dropdown-selector-bg: #111133;
+  --dropdown-selector-text: #e0e0ff;
+  --dropdown-selected-bg: #222266;
+  --dropdown-bg: #0a0a2a;
+  --dropdown-text: #e0e0ff;
+  --dropdown-hover: #5555cc;
+  --dropdown-shadow: rgba(119,119,255,0.4);
+
+  --table-border: #5555cc;
+  --table-h-bg: #333399;
+  --table-h-txt: #fff;
+  --table-hover: #5555cc;
+
+  --selectall-btn-bg: #333399;
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: #222266;
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: #5555cc;
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: #ff77ff;
+
+  --stats-base-bg: #111133;
+  --stats-base-border: #5555cc;
+  --stats-lbl-bg: #222266;
+  --stats-lbl-txt: #e0e0ff;
+  --stats-lbl-border: #5555cc;
+  --stats-lbl-hover: #333399;
+  --stats-checkbox-border: #7777ff;
+
+  --toggle-bg-on: #5555cc;
+  --toggle-bg-off: #222266;
+  --toggler-knob: #ff77ff;
+  --toggle-txt: #e0e0ff;
+  --toggle-warn: #cc4488;
+
+  --meth-bg: #111133;
+  --meth-text: #e0e0ff;
+  --meth-active-bg: linear-gradient(90deg,#5555cc,#7777ff);
+  --meth-active-text: #fff;
+
+  --target-border: #7777ff;
+  --target-warn: #ff4488;
+}
+/* -------------------- Cyberpunk -------------------- */
+:root[data-theme="cyberpunk2"] {
+  --bg-main: #0d0d0d;
+  --text-main: #ff49db;
+
+  --lvl-0: #1a1a1a;
+  --lvl-1: #ff0033;
+  --lvl-2: #ff6600;
+  --lvl-3: #ffcc00;
+  --lvl-4: #00ffcc;
+  --lvl-5: #6600ff;
+  --lvl-6: #ff00ff;
+
+  --dropdown-selector-border: #ff00ff;
+  --dropdown-selector-bg: linear-gradient(90deg, #1a1a1a, #0d0d0d);
+  --dropdown-selector-text: #ff49db;
+  --dropdown-selected-bg: linear-gradient(90deg,#6600ff,#ff00ff);
+  --dropdown-bg: linear-gradient(180deg,#0d0d0d,#1a1a1a);
+  --dropdown-text: #ff49db;
+  --dropdown-hover: linear-gradient(90deg,#ff0033,#ff00ff);
+  --dropdown-shadow: rgba(255,0,255,0.5);
+
+  --table-border: #ff00ff;
+  --table-h-bg: linear-gradient(90deg,#ff0033,#ff00ff);
+  --table-h-txt: #fff;
+  --table-hover: linear-gradient(90deg,#6600ff,#ff49db);
+
+  --selectall-btn-bg: linear-gradient(90deg,#ff00ff,#ff49db);
+  --selectall-btn-txt: #0d0d0d;
+  --clear-btn-bg: linear-gradient(90deg,#ff0033,#ff6600);
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: linear-gradient(90deg,#00ffcc,#6600ff);
+  --preset-btn-txt: #0d0d0d;
+
+  --best-combo-highlight: linear-gradient(90deg,#ffcc00,#ff00ff);
+
+  --stats-base-bg: linear-gradient(180deg,#1a1a1a,#0d0d0d);
+  --stats-base-border: #ff00ff;
+  --stats-lbl-bg: linear-gradient(90deg,#6600ff,#ff00ff);
+  --stats-lbl-txt: #ff49db;
+  --stats-lbl-border: #ffcc00;
+  --stats-lbl-hover: linear-gradient(90deg,#ff0033,#ff49db);
+  --stats-checkbox-border: #ff0033;
+
+  --toggle-bg-on: linear-gradient(90deg,#ff49db,#ff00ff);
+  --toggle-bg-off: linear-gradient(90deg,#1a1a1a,#0d0d0d);
+  --toggler-knob: #ffcc00;
+  --toggle-txt: #ff49db;
+  --toggle-warn: #ff0033;
+
+  --meth-bg: linear-gradient(180deg,#1a1a1a,#0d0d0d);
+  --meth-text: #ff49db;
+  --meth-active-bg: linear-gradient(90deg,#ff0033,#ff00ff);
+  --meth-active-text: #fff;
+
+  --target-border: #ff00ff;
+  --target-warn: #ff0033;
+}
+
+/* -------------------- Aurora -------------------- */
+:root[data-theme="aurora"] {
+  --bg-main: #0a1029;
+  --text-main: #d0f0ff;
+
+  --lvl-0: #101a3d;
+  --lvl-1: #143d5f;
+  --lvl-2: #1779aa;
+  --lvl-3: #1ab2ff;
+  --lvl-4: #5fefff;
+  --lvl-5: #9effff;
+  --lvl-6: #d0ffff;
+
+  --dropdown-selector-border: #1ab2ff;
+  --dropdown-selector-bg: linear-gradient(90deg,#0a1029,#101a3d);
+  --dropdown-selector-text: #d0f0ff;
+  --dropdown-selected-bg: linear-gradient(90deg,#1779aa,#1ab2ff);
+  --dropdown-bg: linear-gradient(180deg,#0a1029,#101a3d);
+  --dropdown-text: #d0f0ff;
+  --dropdown-hover: linear-gradient(90deg,#5fefff,#1ab2ff);
+  --dropdown-shadow: rgba(26,178,255,0.4);
+
+  --table-border: #1ab2ff;
+  --table-h-bg: linear-gradient(90deg,#1779aa,#1ab2ff);
+  --table-h-txt: #fff;
+  --table-hover: linear-gradient(90deg,#5fefff,#9effff);
+
+  --selectall-btn-bg: linear-gradient(90deg,#1ab2ff,#5fefff);
+  --selectall-btn-txt: #0a1029;
+  --clear-btn-bg: linear-gradient(90deg,#143d5f,#1779aa);
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: linear-gradient(90deg,#1779aa,#5fefff);
+  --preset-btn-txt: #0a1029;
+
+  --best-combo-highlight: linear-gradient(90deg,#d0ffff,#5fefff);
+
+  --stats-base-bg: linear-gradient(180deg,#101a3d,#0a1029);
+  --stats-base-border: #1ab2ff;
+  --stats-lbl-bg: linear-gradient(90deg,#1779aa,#1ab2ff);
+  --stats-lbl-txt: #d0f0ff;
+  --stats-lbl-border: #5fefff;
+  --stats-lbl-hover: linear-gradient(90deg,#5fefff,#1779aa);
+  --stats-checkbox-border: #1ab2ff;
+
+  --toggle-bg-on: linear-gradient(90deg,#5fefff,#1ab2ff);
+  --toggle-bg-off: linear-gradient(90deg,#101a3d,#0a1029);
+  --toggler-knob: #d0ffff;
+  --toggle-txt: #d0f0ff;
+  --toggle-warn: #1779aa;
+
+  --meth-bg: linear-gradient(180deg,#101a3d,#0a1029);
+  --meth-text: #d0f0ff;
+  --meth-active-bg: linear-gradient(90deg,#1779aa,#1ab2ff);
+  --meth-active-text: #fff;
+
+  --target-border: #1ab2ff;
+  --target-warn: #143d5f;
+}
+
+/* -------------------- Techno -------------------- */
+:root[data-theme="techno"] {
+  --bg-main: #0f0f0f;
+  --text-main: #00ffea;
+
+  --lvl-0: #1a1a1a;
+  --lvl-1: #00ff00;
+  --lvl-2: #00ff7f;
+  --lvl-3: #00ffea;
+  --lvl-4: #00ccff;
+  --lvl-5: #007fff;
+  --lvl-6: #0000ff;
+
+  --dropdown-selector-border: #00ffea;
+  --dropdown-selector-bg: linear-gradient(90deg,#0f0f0f,#1a1a1a);
+  --dropdown-selector-text: #00ffea;
+  --dropdown-selected-bg: linear-gradient(90deg,#00ff00,#00ffea);
+  --dropdown-bg: linear-gradient(180deg,#0f0f0f,#1a1a1a);
+  --dropdown-text: #00ffea;
+  --dropdown-hover: linear-gradient(90deg,#00ff7f,#00ffea);
+  --dropdown-shadow: rgba(0,255,234,0.4);
+
+  --table-border: #00ffea;
+  --table-h-bg: linear-gradient(90deg,#00ff00,#00ffea);
+  --table-h-txt: #fff;
+  --table-hover: linear-gradient(90deg,#007fff,#00ffea);
+
+  --selectall-btn-bg: linear-gradient(90deg,#00ff00,#00ffea);
+  --selectall-btn-txt: #0f0f0f;
+  --clear-btn-bg: linear-gradient(90deg,#ff0000,#ff3300);
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: linear-gradient(90deg,#00ccff,#007fff);
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: linear-gradient(90deg,#00ffea,#00ff7f);
+
+  --stats-base-bg: linear-gradient(180deg,#1a1a1a,#0f0f0f);
+  --stats-base-border: #00ffea;
+  --stats-lbl-bg: linear-gradient(90deg,#00ff00,#00ffea);
+  --stats-lbl-txt: #00ffea;
+  --stats-lbl-border: #00ff7f;
+  --stats-lbl-hover: linear-gradient(90deg,#00ff7f,#00ffea);
+  --stats-checkbox-border: #00ff00;
+
+  --toggle-bg-on: linear-gradient(90deg,#00ff7f,#00ffea);
+  --toggle-bg-off: linear-gradient(90deg,#0f0f0f,#1a1a1a);
+  --toggler-knob: #00ff7f;
+  --toggle-txt: #00ffea;
+  --toggle-warn: #ff0000;
+
+  --meth-bg: linear-gradient(180deg,#1a1a1a,#0f0f0f);
+  --meth-text: #00ffea;
+  --meth-active-bg: linear-gradient(90deg,#00ff00,#00ffea);
+  --meth-active-text: #fff;
+
+  --target-border: #00ffea;
+  --target-warn: #ff0000;
+}
+
+/* -------------------- Sunset -------------------- */
+:root[data-theme="sunset"] {
+  --bg-main: #ffecd1;
+  --text-main: #ff4500;
+
+  --lvl-0: #ffe6b3;
+  --lvl-1: #ffc266;
+  --lvl-2: #ff9933;
+  --lvl-3: #ff6600;
+  --lvl-4: #ff3300;
+  --lvl-5: #cc0000;
+  --lvl-6: #990000;
+
+  --dropdown-selector-border: #ff4500;
+  --dropdown-selector-bg: linear-gradient(90deg,#ffecd1,#ffe6b3);
+  --dropdown-selector-text: #ff4500;
+  --dropdown-selected-bg: linear-gradient(90deg,#ff6600,#ff9933);
+  --dropdown-bg: linear-gradient(180deg,#ffecd1,#ffc266);
+  --dropdown-text: #ff4500;
+  --dropdown-hover: linear-gradient(90deg,#ff9933,#ff6600);
+  --dropdown-shadow: rgba(255,69,0,0.4);
+
+  --table-border: #ff4500;
+  --table-h-bg: linear-gradient(90deg,#ff6600,#ff9933);
+  --table-h-txt: #fff;
+  --table-hover: linear-gradient(90deg,#ff9933,#ffcc66);
+
+  --selectall-btn-bg: linear-gradient(90deg,#ff6600,#ff9933);
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: linear-gradient(90deg,#cc0000,#990000);
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: linear-gradient(90deg,#ff9933,#ffcc66);
+  --preset-btn-txt: #0a0a0a;
+
+  --best-combo-highlight: linear-gradient(90deg,#ffcc66,#ff9933);
+
+  --stats-base-bg: linear-gradient(180deg,#ffe6b3,#ffc266);
+  --stats-base-border: #ff4500;
+  --stats-lbl-bg: linear-gradient(90deg,#ff6600,#ff9933);
+  --stats-lbl-txt: #ff4500;
+  --stats-lbl-border: #ffcc66;
+  --stats-lbl-hover: linear-gradient(90deg,#ff9933,#ff6600);
+  --stats-checkbox-border: #ff6600;
+
+  --toggle-bg-on: linear-gradient(90deg,#ff9933,#ff6600);
+  --toggle-bg-off: linear-gradient(90deg,#ffe6b3,#ffc266);
+  --toggler-knob: #ffcc66;
+  --toggle-txt: #ff4500;
+  --toggle-warn: #cc0000;
+
+  --meth-bg: linear-gradient(180deg,#ffe6b3,#ffc266);
+  --meth-text: #ff4500;
+  --meth-active-bg: linear-gradient(90deg,#ff6600,#ff9933);
+  --meth-active-text: #fff;
+
+  --target-border: #ff6600;
+  --target-warn: #cc0000;
+}
+
+/* -------------------- Vaporwave -------------------- */
+:root[data-theme="vaporwave"] {
+  --bg-main: #ffe6ff;
+  --text-main: #9900cc;
+
+  --lvl-0: #fff0ff;
+  --lvl-1: #ffccff;
+  --lvl-2: #ff99ff;
+  --lvl-3: #ff66ff;
+  --lvl-4: #cc33ff;
+  --lvl-5: #9900cc;
+  --lvl-6: #660099;
+
+  --dropdown-selector-border: #9900cc;
+  --dropdown-selector-bg: linear-gradient(90deg,#ffe6ff,#ffccff);
+  --dropdown-selector-text: #9900cc;
+  --dropdown-selected-bg: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --dropdown-bg: linear-gradient(180deg,#ffe6ff,#ff99ff);
+  --dropdown-text: #9900cc;
+  --dropdown-hover: linear-gradient(90deg,#ff99ff,#ff66ff);
+  --dropdown-shadow: rgba(153,0,204,0.4);
+
+  --table-border: #9900cc;
+  --table-h-bg: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --table-h-txt: #fff;
+  --table-hover: linear-gradient(90deg,#ff99ff,#ff66ff);
+
+  --selectall-btn-bg: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --selectall-btn-txt: #fff;
+  --clear-btn-bg: linear-gradient(90deg,#9900cc,#660099);
+  --clear-btn-txt: #fff;
+  --preset-btn-bg: linear-gradient(90deg,#ff99ff,#ff66ff);
+  --preset-btn-txt: #fff;
+
+  --best-combo-highlight: linear-gradient(90deg,#ff66ff,#ff99ff);
+
+  --stats-base-bg: linear-gradient(180deg,#ffe6ff,#ffccff);
+  --stats-base-border: #9900cc;
+  --stats-lbl-bg: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --stats-lbl-txt: #9900cc;
+  --stats-lbl-border: #ff99ff;
+  --stats-lbl-hover: linear-gradient(90deg,#ff99ff,#ff66ff);
+  --stats-checkbox-border: #cc33ff;
+
+  --toggle-bg-on: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --toggle-bg-off: linear-gradient(90deg,#ffe6ff,#ffccff);
+  --toggler-knob: #ff99ff;
+  --toggle-txt: #9900cc;
+  --toggle-warn: #660099;
+
+  --meth-bg: linear-gradient(180deg,#ffe6ff,#ffccff);
+  --meth-text: #9900cc;
+  --meth-active-bg: linear-gradient(90deg,#ff66ff,#cc33ff);
+  --meth-active-text: #fff;
+
+  --target-border: #cc33ff;
+  --target-warn: #9900cc;
 }
 
 /* -------------------- EOF THEME -------------------- */
@@ -468,12 +1785,33 @@ input[name="name"]{ width:120px; }
   <select id="themeDropdown">
   <option value="system">System Theme</option>
   <option value="light">Light Theme</option>
+  <option value="dark">Dark Theme</option>
     <option value="win7-light">Windows 7 Light</option>
     <option value="win7-dark">Windows 7 Dark</option>
     <option value="win10-light">Windows 10 Light</option>
     <option value="win10-dark">Windows 10 Dark</option>
     <option value="win11-light">Windows 11 Light</option>
     <option value="win11-dark">Windows 11 Dark</option>
+  <option value="classic-mmo">Classic MMO</option>
+  <option value="rgb">RGB Theme</option>
+  <option value="gamer">Gamer Theme</option>
+  <option value="neon">Neon Theme</option>
+  <option value="modern">Modern Theme</option>
+<option value="forest">Forest Theme</option>
+<option value="sunset">Sunset Theme</option>
+<option value="cyberpunk">Cyberpunk Theme</option>
+<option value="desert">Desert Theme</option>
+<option value="ocean">Ocean Theme</option>
+  <option value="neon">Neon Glow Theme</option>
+  <option value="candy">Candy Theme</option>
+  <option value="retro">Retro 80s Theme</option>
+  <option value="lava">Lava Theme</option>
+  <option value="galaxy">Galaxy Theme</option>
+<option value="cyberpunk2">Cyberpunk2 Theme</option>
+<option value="aurora">Aurora Theme</option>
+<option value="techno">Techno Theme</option>
+<option value="sunset">Sunset Theme</option>
+<option value="vaporwave">Vaporwave Theme</option>
   </select>
 </div>
   
@@ -1169,8 +2507,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
             cursor:'pointer',
             padding:'6px 12px',
             borderRadius:'6px',
-            background: calcMethod===method ? 'linear-gradient(90deg,#0a64ad,#00aaff)' : '#f0f0f0',
-            color: calcMethod===method ? '#fff' : '#333',
+            background: calcMethod===method ? 'var(--meth-active-bg)' : 'var(--meth-bg)',
+            color: calcMethod===method ? 'var(--meth-active-text)' : 'var(--meth-text)',
             fontWeight:'bold',
             transition:'0.3s',
             userSelect:'none'
@@ -1191,7 +2529,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     ),
 //targetlevel
     calcMethod === 'targetLevel' && 
-    e('div', { style: { margin:'12px 0', border:'2px solid #009688', borderRadius:'8px', padding:'8px' } },
+    e('div', { style: { margin:'12px 0', border:'2px solid var(--target-border)', borderRadius:'8px', padding:'8px' } },
     
       e('h4', null, 'Set Target Levels for Each Stat'),
     
@@ -1237,7 +2575,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       ),
     
       // Explanation line
-      e('div', { style:{ marginTop:'8px', fontStyle:'italic', color:'#333', textAlign:'center' } },
+      e('div', { style:{ marginTop:'8px', fontStyle:'italic', color:'var(--target-warn)', textAlign:'center' } },
         'Leaving a field empty makes that stat optional. Entering 0 means targeting level 0 (or closest).'
       )
     ),

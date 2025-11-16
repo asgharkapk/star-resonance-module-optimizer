@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Protocol Module Calculator - Optimize Your Builds</title>
+
+<meta name="description" content="Blue Protocol Module Calculator helps you optimize DPS, Healer, Tank, and Support module combos. Calculate top builds using Maxroll guides.">
+<meta name="keywords" content="Blue Protocol, Module Calculator, DPS Build, Healer Build, Tank Build, Support Build, Maxroll, Blue Protocol Builds, Blue Protocol Optimization, Game Build Calculator">
+<meta name="author" content="asgharkapk">
+
+<!-- Open Graph / Social -->
+<meta property="og:title" content="Blue Protocol Module Calculator - Optimize Your Builds">
+<meta property="og:description" content="Calculate the best module combinations for DPS, Healer, Tank, and Support using Maxroll build guides.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://asgharkapk.github.io/star-resonance-module-optimizer/">
+<meta property="og:image" content="https://yourwebsite.com/images/blue-protocol-calculator.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blue Protocol Module Calculator">
+<meta name="twitter:description" content="Optimize your module combos for Blue Protocol with our advanced calculator. Based on Maxroll build guides.">
+<meta name="twitter:image" content="https://yourwebsite.com/images/blue-protocol-calculator.png">
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+<!-- Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Blue Protocol Module Calculator",
+  "url": "https://asgharkapk.github.io/star-resonance-module-optimizer/",
+  "description": "Interactive module calculator for Blue Protocol, helping players optimize their DPS, Healer, Tank, and Support builds.",
+  "applicationCategory": "Game",
+  "operatingSystem": "Web",
+  "author": {
+    "@type": "Person",
+    "name": "asgharkapk"
+  }
+}
+</script>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<style>
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background:#d4d0c8;
+  color:#000;
+  margin:0; padding:10px;
+}
+h1 { text-align:center; margin-bottom:20px; }
+  
+table {
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #888;
+  padding: 6px 10px;
+  text-align: center;
+}
+th {
+  background: #0a64ad;
+  color: #fff;
+}
+tr:hover {
+  background-color: #d0e4f5;
+}
+  
+input[type=number], input[name="name"]{ width:60px; text-align:center; border:1px inset #888; padding:2px; font-family: "Segoe UI", sans-serif; }
+input[name="name"]{ width:120px; }
+.btn { padding:4px 10px; margin:4px; cursor:pointer; border:2px outset #ccc; border-radius:2px; font-weight:bold; font-family: "Segoe UI", sans-serif; }
+.btn-blue { background:#0a64ad; color:white; }
+.btn-red { background:#c00; color:white; }
+.btn-green { background:#0a7a0a; color:white; }
+.best-combo td { background:#ffd700; font-weight:bold; }
+
+.stats-toggle {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 2px solid #0a64ad;
+  background: #fff;
+  border-radius: 8px;
+  max-width: 1200px;       /* limit width */
+  margin: 0;         /* center it */
+}
+.stats-toggle label {
+  background: #f6f6f6;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.stats-toggle label:hover {
+  background: #e6f1ff;
+}
+
+.level-0 { background:#e0e0e0; }
+.level-1 { background:#f4cccc; }
+.level-2 { background:#fce5cd; }
+.level-3 { background:#fff2cc; }
+.level-4 { background:#d9ead3; }
+.level-5 { background:#c9daf8; }
+.level-6 { background:#9fc5e8; }
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+  
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Blue Protocol Module Calculator</h1>
+
+<input type="file" id="csvInput" accept=".csv">
+<button class="btn btn-green" id="export-import">Export Imported Table CSV</button>
+<button class="btn btn-blue" id="export-all">Export All Output Tables CSV</button>
+<div id="root"></div>
+</div>
+
+<script type="text/javascript">
+const e = React.createElement;
+
+const STATS = [
+  "Strength Boost", "Agility Boost", "Intellect Boost", "Special Attack", "Elite Strike",
+  "Healing Boost", "Healing Enhance", "Resistance", "Armor", "Cast Focus",
+  "Attack SPD", "Crit Focus", "Luck Focus", "DMG Stack", "Agile",
+  "Life Condense", "First Aid", "Final Protection", "Life Wave", "Life Steal", "Team Luck & Crit"
+];
+//icons from Maxroll
+const STAT_ICONS = {
+  "Strength Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_011.webp",
+  "Agility Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_039.webp",
+  "Intellect Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_034.webp",
+  "Special Attack": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_002.webp",
+  "Elite Strike": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_038.webp",
+  "Healing Boost": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_023.webp",
+  "Healing Enhance": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_042.webp",
+  "Resistance": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_009.webp",
+  "Armor": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_014.webp",
+  "Cast Focus": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_013.webp",
+  "Attack SPD": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_026.webp",
+  "Crit Focus": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_019.webp",
+  "Luck Focus": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_048.webp",
+  "DMG Stack": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_016.webp",
+  "Agile": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_006.webp",
+  "Life Condense": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_012.webp",
+  "First Aid": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_024.webp",
+  "Final Protection": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_045.webp",
+  "Life Wave": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_004.webp",
+  "Life Steal": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_035.webp",
+  "Team Luck & Crit": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/items/modules/effects/mod_effect_icon_017.webp"
+};
+// Define role groups
+const ROLE_STATS = {
+  DPS: ["Strength Boost","Agility Boost","Intellect","Special Attack","Elite Strike","Attack SPD","Crit Focus","DMG Stack","Agile"],
+  HEALER: ["Healing Boost","Healing Enhance","First Aid","Life Condense","Life Wave"],
+  TANK: ["Resistance","Armor","Final Protection"],
+  SUPPORT: ["Cast Focus","Luck Focus","Life Steal","Team Luck & Crit"],
+  BASIC: ["Strength Boost","Agility Boost","Intellect Boost","Special Attack","Elite Strike","Healing Boost","Healing Enhance","Cast Focus","Attack SPD","Crit Focus","Luck Focus","Resistance","Armor"],
+  SPECIAL: ["DMG Stack","Agile","Life Condense","First Aid","Life Wave","Life Steal","Team Luck & Crit","Final Protection"]
+};
+// Preset module selections based on Maxroll build guides
+const PRESETS = {
+  "Marksman Wildpack": ["Crit Focus","Attack SPD","DMG Stack","Life Wave","Agility Boost","Elite Strike"],
+  "Marksman Falconry": ["Agility Boost","Crit Focus","DMG Stack","Elite Strike","Attack SPD","Life Wave"],
+  "Beat Performer Dissonance": ["Life Wave","DMG Stack","Attack SPD","Intellect Boost","Elite Strike","Team Luck & Crit"],
+  "Beat Performer Concerto": ["Life Wave","Life Condense","Healing Enhance","Healing Boost","Crit Focus","Team Luck & Crit"],
+  "Shield Knight Recovery": ["Final Protection","Resistance","Armor","Crit Focus","Life Wave"],
+  "Shield Knight Shield": ["Final Protection","Attack SPD","Resistance","Armor"],
+  "Heavy Guardian Earthfort": ["Final Protection","Resistance","Life Wave","Armor","Crit Focus"],
+  "Heavy Guardian Block": ["Final Protection","Armor","Resistance","Life Wave"],
+  "Verdant Oracle Smite": ["Life Wave","DMG Stack","Cast Focus","Intellect Boost","Elite Strike","Team Luck & Crit"],
+  "Verdant Oracle Lifebind": ["Life Wave","Life Condense","Healing Enhance","Crit Focus","Cast Focus","Team Luck & Crit"],
+  "Wind Knight Vanguard": ["DMG Stack","Elite Strike","Strength Boost","Attack SPD","Life Wave","Crit Focus"],
+  "Wind Knight Skyward": ["DMG Stack","Elite Strike","Strength Boost","Attack SPD","Life Wave","Crit Focus","Luck Focus"],
+  "Frost Mage Icicle": ["DMG Stack","Life Wave","Elite Strike","Intellect Boost","Crit Focus","Special Attack"],
+  "Frost Mage Frostbeam": ["DMG Stack","Life Wave","Elite Strike","Cast Focus","Intellect Boost","Crit Focus"],
+  "Stormblade Moonstrike": ["DMG Stack","Life Wave","Elite Strike","Agility Boost","Attack SPD"],
+  "Stormblade Iaido Slash": ["DMG Stack","Elite Strike","Crit Focus","Agility Boost","Special Attack"]
+};
+const PRESET_ICONS = {
+  "Marksman Wildpack": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_petbig.webp",
+  "Marksman Falconry": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skyhitget.webp",
+  "Beat Performer Dissonance": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1308.webp",
+  "Beat Performer Concerto": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/gita1317.webp",
+  "Shield Knight Recovery": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1208.webp",
+  "Shield Knight Shield": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/jiandun1218.webp",
+  "Heavy Guardian Earthfort": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_tank_shieldcounter.webp",
+  "Heavy Guardian Block": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_inspireex.webp",
+  "Verdant Oracle Smite": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_aoyitrigger.webp",
+  "Verdant Oracle Lifebind": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_sup_healringget.webp",
+  "Wind Knight Vanguard": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_backhitget.webp",
+  "Wind Knight Skyward": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_flyhitget.webp",
+  "Frost Mage Icicle": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_skilltriggericearrow.webp",
+  "Frost Mage Frostbeam": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_icespearget.webp",
+  "Stormblade Moonstrike": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_sickleget.webp",
+  "Stormblade Iaido Slash": "https://assets-ng.maxroll.gg/sr-tools/assets/db/icons/talents/talent_passive_icon_general_dps_joy.webp"
+};
+
+const thresholds = [[6,20],[5,16],[4,12],[3,8],[2,4],[1,1]];
+
+function level_for(total){
+  for(const [lvl,req] of thresholds){
+    if(total >= req) return lvl;
+  }
+  return 0;
+}
+
+function combinations(arr, k){
+  const results = [];
+  function comb(current, start){
+    if(current.length === k){ results.push([...current]); return; }
+    for(let i=start;i<arr.length;i++){ current.push(arr[i]); comb(current,i+1); current.pop(); }
+  }
+  comb([],0);
+  return results;
+}
+
+function getLevelClass(lvl){ return 'level-'+lvl; }
+
+function exportCSVMultiple(tables){
+  let csv = [];
+  tables.forEach(tbl=>{
+    csv.push(tbl.title);
+    csv.push(tbl.headers.join(','));
+    tbl.rows.forEach(r=>{ csv.push(r.join(',')); });
+    csv.push('');
+  });
+  const blob = new Blob([csv.join('\n')], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "bpsr_module_output.csv";
+  link.click();
+}
+
+function App(props){
+  const initialData = props?.initialData || [{name:"X1", ...Object.fromEntries(STATS.map(s=>[s,0]))}];
+  const [data,setData] = React.useState(initialData);
+  const [bestResults,setBestResults] = React.useState({});
+  const [visibleStats,setVisibleStats] = React.useState(STATS.reduce((acc,s)=>{acc[s]=false;return acc;},{}));
+  const [calcMethod,setCalcMethod] = React.useState('total'); // 'total' or 'highest'
+  
+  const selectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=true; return acc;},{}));
+  const deselectAll = () => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=false; return acc;},{}));
+  const selectRole = (role) => setVisibleStats(STATS.reduce((acc,s)=>{acc[s]=ROLE_STATS[role].includes(s); return acc;},{}));
+
+  const [ignoreHidden, setIgnoreHidden] = React.useState(true); // default ON
+
+  const [targetLevels, setTargetLevels] = React.useState(Object.fromEntries(STATS.map(s => [s, null]))); //TARGETLEVEL
+
+  // Data handlers
+  const handleChange = (i,key,val)=>{
+    const copy = [...data]; copy[i][key] = key==="name"? val : Number(val)||0; setData(copy);
+  }
+  const handleAddRow = ()=>{
+    const newModule = {name:`X${data.length+1}`};
+    STATS.forEach(s=>newModule[s]=0);
+    setData([...data,newModule]);
+  }
+  const handleRemoveRow = (i)=>setData(data.filter((_,idx)=>idx!==i));
+  const toggleStat = (stat)=> setVisibleStats({...visibleStats, [stat]:!visibleStats[stat]});
+
+// SCORE CALCULATOR 👇 
+// Attribute thresholds
+const ATTR_THRESHOLDS = [1, 4, 8, 12, 16, 20];
+
+// Base attribute power map
+const BASIC_ATTR_POWER_MAP = {1:7, 2:14, 3:29, 4:44, 5:167, 6:254};
+
+// Special attribute power map
+const SPECIAL_ATTR_POWER_MAP = {1:14, 2:29, 3:59, 4:89, 5:298, 6:448};
+
+// Total attribute power map
+const TOTAL_ATTR_POWER_MAP = {
+  0:0,1:5,2:11,3:17,4:23,5:29,6:34,7:40,8:46,
+  18:104,19:110,20:116,21:122,22:128,23:133,24:139,25:145,
+  26:151,27:157,28:163,29:168,30:174,31:180,32:186,33:192,
+  34:198,35:203,36:209,37:215,38:221,39:227,40:233,41:238,
+  42:244,43:250,44:256,45:262,46:267,47:273,48:279,49:285,
+  50:291,51:297,52:302,53:308,54:314,55:320,56:326,57:332,
+  58:337,59:343,60:349,61:355,62:361,63:366,64:372,65:378,
+  66:384,67:390,68:396,69:401,70:407,71:413,72:419,73:425,
+  74:431,75:436,76:442,77:448,78:454,79:460,80:466,81:471,
+  82:477,83:483,84:489,85:495,86:500,87:506,88:512,89:518,
+  90:524,91:530,92:535,93:541,94:547,95:553,96:559,97:565,
+  98:570,99:576,100:582,101:588,102:594,103:599,104:605,105:611,
+  106:617,113:658,114:664,115:669,116:675,117:681,118:687,119:693,120:699
+};
+
+// Attribute name -> type map (English)
+const ATTR_NAME_TYPE_MAP = {
+  "Strength Boost": "basic",
+  "Agility Boost": "basic",
+  "Intellect Boost": "basic",
+  "Special Attack": "basic",
+  "Elite Strike": "basic",
+  "Healing Boost": "basic",
+  "Healing Enhance": "basic",
+  "Cast Focus": "basic",
+  "Attack SPD": "basic",
+  "Crit Focus": "basic",
+  "Luck Focus": "basic",
+  "Resistance": "basic",
+  "Armor": "basic",
+  "DMG Stack": "special",
+  "Agile": "special",
+  "Life Condense": "special",
+  "First Aid": "special",
+  "Life Wave": "special",
+  "Life Steal": "special",
+  "Team Luck & Crit": "special",
+  "Final Protection": "special"
+};
+
+// Function to compute solution.score
+function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
+// Aggregate attributes across all module parts
+  const attrBreakdown = {};
+  
+// Each module is a flat object: { name, "Strength Boost": 5, ... }
+  for (const module of modules) {
+    for (const attrName of STATS) {
+      if (ignoreHidden && visibleStatsMap && !visibleStatsMap[attrName]) continue;
+      attrBreakdown[attrName] = (attrBreakdown[attrName] || 0) + (module[attrName] || 0);
+    }
+  }
+
+  let thresholdPower = 0;
+  let totalAttrValue = 0;
+
+  for (const [attrName, value] of Object.entries(attrBreakdown)) {
+    totalAttrValue += value;
+
+    // Determine threshold level
+    let level = 0;
+    for (let i = 0; i < ATTR_THRESHOLDS.length; i++) {
+      if (value >= ATTR_THRESHOLDS[i]) level = i+1;
+      else break;
+    }
+
+    if (level > 0) {
+      const type = ATTR_NAME_TYPE_MAP[attrName] || "basic";
+      if (type === "special") thresholdPower += SPECIAL_ATTR_POWER_MAP[level] || 0;
+      else thresholdPower += BASIC_ATTR_POWER_MAP[level] || 0;
+    }
+  }
+
+  const totalAttrPower = TOTAL_ATTR_POWER_MAP[totalAttrValue] || 0;
+  return thresholdPower + totalAttrPower;
+}
+// SCORE CALCULATOR 👆 
+
+  // Function to select a preset
+  function selectPreset(presetName) {
+    const statsToSelect = PRESETS[presetName] || [];
+    const newVisibleStats = {};
+    STATS.forEach(stat => {
+      newVisibleStats[stat] = statsToSelect.includes(stat);
+    });
+    setVisibleStats(newVisibleStats); // <-- triggers re-render
+  }
+  function PresetDropdown({ presets, onSelect }) {
+    const [open, setOpen] = React.useState(false);
+    const [selected, setSelected] = React.useState("");
+  
+    const handleSelect = (name) => {
+      setSelected(name);
+      onSelect(name);
+      setOpen(false);
+    };
+  
+    return e('div', { style: { position: 'relative', display: 'inline-block', width: '280px' } },
+      // Selected item
+      e('div', {
+        style: {
+          padding: '8px 12px',
+          borderRadius: '8px',
+          border: '1px solid #0a64ad',
+          background: '#f0f8ff',
+          color: '#0a64ad',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          cursor: 'pointer',
+          userSelect: 'none',
+        },
+        onClick: () => setOpen(!open)
+      },
+        selected || '-- Select a Guide --'
+      ),
+      // Dropdown list
+      open && e('div', {
+        style: {
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          maxHeight: '250px',
+          overflowY: 'auto',
+          border: '1px solid #0a64ad',
+          background: '#000',        // <-- black background
+          color: '#fff',             // <-- white text
+          zIndex: 100,
+          borderRadius: '6px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.5)'
+        }
+      },
+        Object.keys(presets).map(name => {
+          const icon = PRESET_ICONS[name] || '';
+          return e('div', {
+            key: name,
+            onClick: () => handleSelect(name),
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              padding: '6px 10px',
+              cursor: 'pointer',
+              color: '#fff',          // white text inside each item
+            },
+            onMouseEnter: e => e.currentTarget.style.background = '#333',
+            onMouseLeave: e => e.currentTarget.style.background = 'transparent'
+          },
+            e('img', { src: icon, width: 24, height: 24, style: { marginRight: '8px' } }),
+            name
+          )
+        })
+      )
+    )
+  }
+  
+  React.useEffect(() => {
+    // Expose a function globally to update CSV
+    window.loadCSVData = (formatted) => {
+      setData(formatted);
+    };
+  }, []);
+
+  // Compute best combos
+  React.useEffect(()=>{
+    if(data.length<4) return;
+    const allComb = combinations(data,4);
+    const results = [];
+    allComb.forEach(combo=>{
+      const sums = {}; const lvls = {};
+      STATS.filter(s => visibleStats[s]).forEach(s => { // only visible stats
+        sums[s] = combo.reduce((acc,m)=>acc+m[s],0);
+        lvls[s] = level_for(sums[s]);
+      });
+      const min_lvl = Math.min(...Object.values(lvls));
+      results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
+    });
+
+    // Top per stat
+    const topPerStat = {};
+    STATS.forEach(s=>{
+      const sorted = [...results].sort((a,b)=>b.lvls[s]-a.lvls[s]);
+      topPerStat[s] = sorted.slice(0,5);
+    });
+
+// Top Total / Highest Levels / Smart Combo
+    let topTotal = [...results];
+  // 📊 Sort by sum of all levels
+    if(calcMethod==='total'){
+      topTotal.sort((a, b) => {
+        const totalA = STATS.reduce((acc, s) => acc + (a.lvls[s] || 0), 0);
+        const totalB = STATS.reduce((acc, s) => acc + (b.lvls[s] || 0), 0);
+        return totalB - totalA; // highest total levels first
+      });
+  // 🏆 Sort by how many high-level stats each combo has
+    } else if(calcMethod==='highest'){
+      function levelVector(r){
+        const counts = Array(7).fill(0);
+        STATS.forEach(s=>counts[r.lvls[s]]++);
+        return counts.reverse();
+      }
+      topTotal.sort((a,b)=>{
+        const vecA = levelVector(a);
+        const vecB = levelVector(b);
+        for(let i=0;i<vecA.length;i++){ if(vecB[i]!==vecA[i]) return vecB[i]-vecA[i]; }
+        return 0;
+      });
+  // 🧠 Smart mode: combine both level distribution and raw totals
+    } else if(calcMethod === 'smart') {
+      function levelVector(r){
+        const counts = Array(7).fill(0);
+        STATS.forEach(s=>counts[r.lvls[s]]++);
+        return counts.reverse();
+      }
+      topTotal.sort((a,b)=>{
+        const vecA = levelVector(a);
+        const vecB = levelVector(b);
+    
+        // 1️⃣ Prioritize more high-level stats (6s > 5s > 4s…)
+        for(let i=0;i<vecA.length;i++){
+          if(vecB[i]!==vecA[i]) return vecB[i]-vecA[i];
+        }
+    
+        // 2️⃣ If tied, compare sum of all levels
+        const sumA = STATS.reduce((acc,s)=>acc+a.lvls[s],0);
+        const sumB = STATS.reduce((acc,s)=>acc+b.lvls[s],0);
+        if(sumB !== sumA) return sumB - sumA;
+    
+        // 3️⃣ Final tie-break: compare raw total stat values
+        const rawA = STATS.reduce((acc,s)=>acc+a.sums[s],0);
+        const rawB = STATS.reduce((acc,s)=>acc+b.sums[s],0);
+        return rawB - rawA;
+      });
+    } else if (calcMethod === 'weighted') {
+      // Higher levels are exponentially more valuable
+      const weights = [0, 1, 2, 4, 8, 16, 32]; // index = level
+      topTotal.sort((a,b)=>{
+        const scoreA = STATS.reduce((acc,s)=>acc+weights[a.lvls[s]||0],0);
+        const scoreB = STATS.reduce((acc,s)=>acc+weights[b.lvls[s]||0],0);
+        return scoreB - scoreA;
+      });
+    } else if (calcMethod === 'balanced') {
+      // Minimize variance between stat levels
+      topTotal.sort((a,b)=>{
+        const avgA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0)/STATS.length;
+        const avgB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0)/STATS.length;
+    
+        const varA = STATS.reduce((acc,s)=>acc+Math.pow((a.lvls[s]||0)-avgA,2),0);
+        const varB = STATS.reduce((acc,s)=>acc+Math.pow((b.lvls[s]||0)-avgB,2),0);
+    
+        // Prefer higher average, lower variance
+        if(avgB!==avgA) return avgB - avgA;
+        return varA - varB;
+      });
+    } else if (calcMethod === 'spike') {
+      // Focus on the single best stat of the combo
+      topTotal.sort((a,b)=>{
+        const maxA = Math.max(...STATS.map(s=>a.lvls[s]||0));
+        const maxB = Math.max(...STATS.map(s=>b.lvls[s]||0));
+        if(maxB !== maxA) return maxB - maxA;
+    
+        // If tied, prefer higher total
+        const totalA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0);
+        const totalB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0);
+        return totalB - totalA;
+      });
+    } else if (calcMethod === 'efficiency') {
+      // Best ratio of total raw stat sum / number of high-level stats
+      topTotal.sort((a,b)=>{
+        const rawA = STATS.reduce((acc,s)=>acc+(a.sums[s]||0),0);
+        const rawB = STATS.reduce((acc,s)=>acc+(b.sums[s]||0),0);
+    
+        const highCountA = STATS.filter(s=>a.lvls[s]>=4).length;
+        const highCountB = STATS.filter(s=>b.lvls[s]>=4).length;
+    
+        const effA = rawA / (highCountA || 1);
+        const effB = rawB / (highCountB || 1);
+    
+        return effB - effA;
+      });
+    } else if (calcMethod === 'synergy') {
+      const SYNERGY_PAIRS = [
+        ['Attack SPD','Crit Focus'],
+        ['Healing Boost','Healing Enhance'],
+        ['Strength Boost','Special Attack']
+      ];
+      topTotal.sort((a,b)=>{
+        const baseA = STATS.reduce((acc,s)=>acc+(a.lvls[s]||0),0);
+        const baseB = STATS.reduce((acc,s)=>acc+(b.lvls[s]||0),0);
+    
+        const synA = SYNERGY_PAIRS.reduce((acc,[s1,s2])=>{
+          return acc + Math.min(a.lvls[s1]||0, a.lvls[s2]||0);
+        },0);
+        const synB = SYNERGY_PAIRS.reduce((acc,[s1,s2])=>{
+          return acc + Math.min(b.lvls[s1]||0, b.lvls[s2]||0);
+        },0);
+    
+        return (baseB+synB*2) - (baseA+synA*2);
+      });
+    } else if (calcMethod === 'abilityScore') {
+        topTotal.sort((a, b) => {
+      
+          // Convert combo "M1,M2,M3,M4" back into real modules:
+          const modulesA = data.filter(m => a.combo.split(',').includes(m.name));
+          const modulesB = data.filter(m => b.combo.split(',').includes(m.name));
+      
+          const scoreA = calculateSolutionScore(modulesA, visibleStats, ignoreHidden);
+          const scoreB = calculateSolutionScore(modulesB, visibleStats, ignoreHidden);
+      
+          return scoreB - scoreA; // highest score first
+        });
+    } else if (calcMethod === 'targetLevel') {
+        topTotal.sort((a, b) => {
+      
+          const modulesA = data.filter(m => a.combo.split(',').includes(m.name));
+          const modulesB = data.filter(m => b.combo.split(',').includes(m.name));
+      
+          let diffA = 0, diffB = 0;
+          const lvlsA = {}, lvlsB = {};
+      
+          STATS.forEach(s => {
+      
+            // ALWAYS compute actual module levels (never hide or change)
+            const sumA = modulesA.reduce((acc, m) => acc + m[s], 0);
+            const sumB = modulesB.reduce((acc, m) => acc + m[s], 0);
+      
+            const actualA = level_for(sumA);
+            const actualB = level_for(sumB);
+      
+            lvlsA[s] = actualA;
+            lvlsB[s] = actualB;
+      
+            // Optional target: only affects sorting, not level value
+            const target = targetLevels[s];
+      
+            // do not hide or skip level — only ignore for scoring
+            if (target === null || target === undefined || !visibleStats[s]) {
+              return; // skip scoring this stat only
+            }
+      
+            // diff scoring (closest level to target)
+            diffA += Math.abs(target - actualA);
+            diffB += Math.abs(target - actualB);
+          });
+      
+          // Store all real levels for UI
+          a.lvls = lvlsA;
+          b.lvls = lvlsB;
+      
+          // lower diff = better
+          return diffA - diffB;
+        });
+    }
+    topTotal = topTotal.slice(0,10);
+
+    // Best balanced
+    const balanced = [...results].sort((a,b)=>{
+      if(b.min_lvl!==a.min_lvl) return b.min_lvl - a.min_lvl;
+      for(let s of STATS){ if(b.lvls[s]!==a.lvls[s]) return b.lvls[s]-a.lvls[s]; }
+      return 0;
+    }).slice(0,10);
+
+    setBestResults({topPerStat, topTotal, balanced});
+    window.bestResultsGlobal = {topPerStat, topTotal, balanced};
+    window.appData = data;
+  },[data, calcMethod, visibleStats, ignoreHidden, targetLevels]); // ✅ added visibleStats + ignoreHidden
+
+// Render START
+  return e('div',null,
+    e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
+      e('label', { style:{ fontWeight:'bold', color:'#0a64ad' } }, ['Presets based on ', e('a', { href: 'https://maxroll.gg/blue-protocol/build-guides', target: '_blank', rel: 'noopener noreferrer', style:{ color:'#0a64ad', textDecoration:'underline', cursor:'pointer' } }, 'Maxroll'), ' Build Guides:']),
+// Custom dropdown
+      e(PresetDropdown, {
+        presets: PRESETS,
+        onSelect: presetName => {
+          const statsToSelect = PRESETS[presetName] || [];
+          const newVisibleStats = {};
+          STATS.forEach(stat => { newVisibleStats[stat] = statsToSelect.includes(stat); });
+          setVisibleStats(newVisibleStats);
+        }
+      })
+    ),
+// BUTTONS
+    e('div',{className:"stats-buttons", style:{marginBottom:"8px", display:'flex', gap:'8px', flexWrap:'wrap'}},
+      e('button',{className:"btn btn-blue", onClick:selectAll},"Select All"),
+      e('button',{className:"btn btn-red", onClick:deselectAll},"Deselect All"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('DPS')},"DPS"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('HEALER')},"HEALER"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('TANK')},"TANK"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('SUPPORT')},"SUPPORT"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('BASIC')},"BASIC"),
+      e('button',{className:"btn btn-green", onClick:()=>selectRole('SPECIAL')},"SPECIAL")
+    ),
+// BUTTONS
+    e('div',{className:"stats-toggle"},
+      STATS.map(s => e('label', { key: s, style:{marginRight:"10px", whiteSpace: 'normal', textAlign:'center'} },
+        e('input', { type:'checkbox', checked:visibleStats[s], onChange:()=>toggleStat(s) }),
+        e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16, style:{verticalAlign:'middle', marginLeft:'4px', marginRight:'2px'} }),
+        s
+      ))
+    ),
+// Checkbox toggle in render
+    e('div', {
+      style: {
+        border: '2px solid #673AB7',
+        borderRadius: '12px',
+        padding: '10px 12px',
+        display: 'flex',
+        alignItems: 'center',
+        maxWidth: '500px',
+        gap: '10px'
+      }
+    },
+      // Small toggle button
+      e('label', { style: { display: 'flex', alignItems: 'center', cursor: 'pointer' }, title: 'Toggle to ignore hidden stats in calculations' },
+        e('input', {
+          type: 'checkbox',
+          checked: ignoreHidden,
+          onChange: () => setIgnoreHidden(!ignoreHidden),
+          style: { display: 'none' }
+        }),
+        e('span', {
+          style: {
+            width: '36px',               // smaller toggle
+            height: '18px',              // smaller height
+            background: ignoreHidden ? '#673AB7' : '#ccc',
+            borderRadius: '9px',
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: ignoreHidden ? 'flex-end' : 'flex-start',
+            padding: '2px',
+            transition: 'background 0.3s'
+          }
+        },
+          e('span', {
+            style: {
+              width: '14px',             // smaller knob
+              height: '14px',
+              background: '#fff',
+              borderRadius: '50%',
+              transition: 'all 0.3s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+            }
+          })
+        )
+      ),
+    
+      // Text + details first
+      e('div', { style: { fontSize: '16px', fontWeight: 'bold', color: '#333' } },
+        'Ignore hidden stats:',
+        e('span', { style: { fontSize: '12px', color: '#555', marginLeft: '6px' } },
+          'Hidden stats will not count in calculations'
+        )
+      )
+    ),
+// TABLES
+    e('table',null,
+      e('thead',null,e('tr',null,
+// INPUT TABLE HEADER
+        e('th',null,'Module Name'),
+        STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
+          e('img', { src: STAT_ICONS[s], alt: s, title: s, width:20, height:20, style:{verticalAlign:'middle', marginRight:'4px'} }),
+          s
+        ) : null),
+        e('th',null,'Remove')
+      )),
+// INPUT TABLE BODY
+// body
+      e('tbody', null, data.map((row, i) =>
+        e('tr', { key: i },
+          e('td', { className: 'level-6' }, row.name),
+          STATS.map(s => visibleStats[s] ? e('td', {
+            key: s,
+            className: getLevelClass(level_for(row[s]))
+          },
+            e('div', {
+              style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }
+            },
+              e('img', {
+                src: STAT_ICONS[s],
+                alt: s,
+                title: s,
+                width: 16,
+                height: 16
+              }),
+              e('input', {
+                type: 'number',
+                min: 0, // prevents negative in UI
+                value: row[s] > 0 ? row[s] : '', // hide 0
+                onChange: (e) => {
+                  const val = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
+                  handleChange(i, s, val);
+                },
+                onKeyDown: (e) => {
+                  if (e.key === '-') e.preventDefault(); // block typing '-'
+                },
+                style: { width: '40px', textAlign: 'center' }
+              })
+            )
+          ) : null),
+          e('td', null,
+            e('button', { className: "btn btn-red", onClick: () => handleRemoveRow(i) }, '✕')
+          )
+        )
+      ))
+// body
+    ),
+// BUTTONS
+    e('div',{className:"mb-2"},
+      e('button',{className:"btn btn-green", onClick:handleAddRow},'+ Add Module'),
+      e('button',{className:"btn btn-red", onClick:()=>setData([])},'Clear Table')
+    ),
+// WARNING
+    (() => {
+      const selectedCount = STATS.filter(s => visibleStats[s]).length;
+      const moduleCount = data.length; // use your state variable
+    
+      if (selectedCount < 1 || moduleCount < 4) {
+        return e('h4', { style: { color: 'red', margin: '8px 0' } },
+          '[Oops! You need at least one stat selected and a minimum of four modules.]'
+        );
+      }
+      return null;
+    })(),
+// BUTTONS
+    e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
+      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore','targetLevel'].map(method =>
+        e('label',{key:method, style:{
+            cursor:'pointer',
+            padding:'6px 12px',
+            borderRadius:'6px',
+            background: calcMethod===method ? 'linear-gradient(90deg,#0a64ad,#00aaff)' : '#f0f0f0',
+            color: calcMethod===method ? '#fff' : '#333',
+            fontWeight:'bold',
+            transition:'0.3s',
+            userSelect:'none'
+          }},
+          e('input',{type:'radio', checked:calcMethod===method, onChange:()=>setCalcMethod(method), style:{display:'none'}}),
+          method === 'total' ? 'Total Level' :
+          method === 'highest' ? 'Highest Levels' :
+          method === 'smart' ? 'Smart Combination' :
+          method === 'weighted' ? 'Weighted Power' :
+          method === 'balanced' ? 'Balanced Mode' :
+          method === 'spike' ? 'Spike Mode' :
+          method === 'efficiency' ? 'Efficiency Mode' :
+          method === 'synergy' ? 'Synergy Mode' :
+          method === 'abilityScore' ? 'Ability Score Mode' :
+          'Target Level Mode'
+        )
+      )
+    ),
+//targetlevel
+    calcMethod === 'targetLevel' && 
+    e('div', { style: { margin:'12px 0', border:'2px solid #009688', borderRadius:'8px', padding:'8px' } },
+    
+      e('h4', null, 'Set Target Levels for Each Stat'),
+    
+      e('table', null,
+        e('thead', null,
+          e('tr', null,
+            e('th', { style:{whiteSpace:'normal', textAlign:'center'} }, 'Target Stat'), // first column
+            STATS.map(s => visibleStats[s] ? 
+              e('th', { key:s, style:{whiteSpace:'normal', textAlign:'center'} },
+                e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+                  e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                  s
+                )
+              )
+            : null)
+          )
+        ),
+    
+        e('tbody', null,
+          e('tr', null,
+            e('td', { style:{fontWeight:'bold', textAlign:'center'} }, 'Target Level'), // first column per row
+            STATS.map(s => visibleStats[s] ?
+              e('td', { key:s },
+                e('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', gap:'4px' } },
+                  e('img', { src: STAT_ICONS[s], alt:s, title:s, width:16, height:16 }),
+                  e('input', {
+                    type:'number',
+                    min:0,
+                    max:6,
+                    value: targetLevels[s] ?? '',
+                    onChange: e => {
+                      const raw = e.target.value;
+                      const val = raw === '' ? null : Number(raw);  
+                      setTargetLevels({ ...targetLevels, [s]: val });
+                    },
+                    style:{ width:'40px', textAlign:'center' }
+                  })
+                )
+              )
+            : null)
+          )
+        )
+      ),
+    
+      // Explanation line
+      e('div', { style:{ marginTop:'8px', fontStyle:'italic', color:'#333', textAlign:'center' } },
+        'Leaving a field empty makes that stat optional. Entering 0 means targeting level 0 (or closest).'
+      )
+    ),
+//targetlevel
+// OUTPUT TABLES
+    bestResults.topTotal && e('div',{className:'results'},
+      e('h3', null, 
+        calcMethod === 'total'      ? 'Top Total Combos (Combos ranked by the sum of all stat levels, maximizing overall stat coverage)' :
+        calcMethod === 'highest'    ? 'Top Combos (Combos ranked by number of high-level stats, prioritizing modules with more top-tier stats)' :
+        calcMethod === 'smart'      ? 'Smart Combination Results (Hybrid ranking: prioritizes high-level stats first, then total levels, then raw stat values for tie-breaking)' :
+        calcMethod === 'weighted'   ? 'Weighted Power Mode (Exponential weighting of stat levels, giving more importance to higher-level stats)' :
+        calcMethod === 'balanced'   ? 'Balanced Mode (Ranks combos by even distribution of stats, minimizing variance between stat levels)' :
+        calcMethod === 'spike'      ? 'Spike Mode (Focuses on maximizing a single peak stat, then total levels as tie-breaker)' :
+        calcMethod === 'efficiency' ? 'Efficiency Mode (Optimizes raw stat sum per number of high-level stats, rewarding combos with more value per high-level stat)' :
+        calcMethod === 'synergy'    ? 'Synergy Mode (Ranks combos based on complementary stat pairs, rewarding combinations that work well together)' :
+        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-game scoring: calculates official game ability score based on visible stats and thresholds)' :
+        calcMethod === 'targetLevel'    ? 'Target Level Mode (Ranks combos by closeness to your custom target levels for each stat, capping each stat at its target)' :
+        'Top Combos'
+      ),
+      e('table',null,
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
+            e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+              e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
+              s+' Lvl'
+            )
+          ) : null),
+          e('th', null, 'Ability Score') // SCORE CALCULATOR
+        )),
+// body
+        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+          e('td',null,r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+        )))
+// body
+      )
+    ),
+    Object.keys(bestResults.topPerStat || {}).map(stat=>{
+      return e('div',{key:stat},
+        e('h3',null,'Top '+stat+' combos'),
+        e('table',null,
+          e('thead',null,e('tr',null,
+            e('th',null,'Modules'),
+          STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
+            e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+              e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
+              s+' Lvl'
+            )
+          ) : null),
+          e('th', null, 'Ability Score') // SCORE CALCULATOR
+          )),
+// body
+          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+            e('td',null,r.combo),
+            STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          )))
+// body
+        )
+      )
+    }),
+// OUTPUT TABLES
+    bestResults.balanced && e('div',{className:'results'},
+// HEADER
+      e('h3',null,'Best Balanced combos (maximize min level)'),
+// body
+      e('table',null,
+        e('thead',null,e('tr',null,
+          e('th',null,'Modules'),
+          STATS.map(s => visibleStats[s] ? e('th', { key: s, style:{whiteSpace: 'normal', textAlign:'center'} },
+            e('div', { style:{display:'flex', alignItems:'center', justifyContent:'center', gap:'4px'} },
+              e('img', { src: STAT_ICONS[s], alt: s, title: s, width:16, height:16 }),
+              s+' Lvl'
+            )
+          ) : null),
+          e('th', null, 'Ability Score') // SCORE CALCULATOR
+        )),
+        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
+          e('td',null,r.combo),
+          STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+        )))
+      )
+// body
+    )
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(e(App));
+
+// CSV Import
+document.getElementById('csvInput').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (evt) {
+    let text = evt.target.result;
+
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+    const lines = text.replace(/\r\n/g, '\n').trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
+
+    const rows = dataRows.map(line => {
+      const vals = line.split(',').map(v => v.trim());
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = vals[i]);
+      return obj;
+    });
+
+    const formatted = rows.map(row => {
+      const nameKey = Object.keys(row).find(k => k.toLowerCase().includes('module name')) || 'name';
+      const newRow = { name: row[nameKey] || 'Module' };
+      STATS.forEach(s => {
+        newRow[s] = Number((row[s] || "0").trim());
+      });
+      return newRow;
+    });
+
+    console.log("✅ Parsed rows:", formatted);
+    // Update the existing App state instead of re-rendering
+    if (window.loadCSVData) window.loadCSVData(formatted);
+  };
+
+  reader.readAsText(file);
+});
+
+// Export imported table
+document.getElementById('export-import').addEventListener('click',()=>{
+  const data = window.appData || [];
+  if(!data.length) return;
+  let csv = [ ["Module Name", ...STATS].join(",") ];
+  data.forEach(row=>{
+    const line = [row.name, ...STATS.map(s=>row[s])];
+    csv.push(line.join(","));
+  });
+  const blob = new Blob([csv.join("\n")], {type:'text/csv'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "imported_modules.csv";
+  link.click();
+});
+
+// Export all output tables
+document.getElementById('export-all').addEventListener('click',()=>{
+  const bestResults = window.bestResultsGlobal;
+  if(!bestResults) return alert("No results to export!");
+  const tables = [];
+
+  if(bestResults.topTotal){
+    tables.push({
+      title:"Top Total Combos",
+      headers:["Modules", ...STATS.map(s=>"Lvl "+s)],
+      rows: bestResults.topTotal.map(r=>[r.combo, ...STATS.map(s=>r.lvls[s])])
+    });
+  }
+
+  for(const s of STATS){
+    if(bestResults.topPerStat && bestResults.topPerStat[s]){
+      tables.push({
+        title:"Top "+s+" Combos",
+        headers:["Modules", ...STATS.map(st=>"Lvl "+st)],
+        rows: bestResults.topPerStat[s].map(r=>[r.combo, ...STATS.map(st=>r.lvls[st])])
+      });
+    }
+  }
+
+  if(bestResults.balanced){
+    tables.push({
+      title:"Best Balanced Combos",
+      headers:["Modules", ...STATS.map(s=>"Lvl "+s)],
+      rows: bestResults.balanced.map(r=>[r.combo, ...STATS.map(s=>r.lvls[s])])
+    });
+  }
+
+  exportCSVMultiple(tables);
+});
+</script>
+
+<footer style="
+  text-align:center; 
+  padding:15px; 
+  background: linear-gradient(90deg, #0a64ad, #00aaff); 
+  color:white; 
+  margin-top:20px; 
+  border-radius:10px; 
+  font-weight:bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height:1.6;
+">
+  &copy; 2025 <span style="color:#ffd700;">Blue Protocol Calculator</span> 🌟<br>
+  Made for you with ❤️ and lots of ☕<br>
+  Big thanks to <a href="https://maxroll.gg/blue-protocol/resources/modules-guide" target="_blank" style="color:#ffdd00; text-decoration:underline;">Maxroll</a> for the awesome guides and in-game icons! 🎨
+</footer>
+
+</body>
+</html>

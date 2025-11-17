@@ -2574,10 +2574,16 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     const results = [];
     allComb.forEach(combo=>{
       const sums = {}; const lvls = {};
-      STATS.filter(s => visibleStats[s]).forEach(s => { // only visible stats
+      //
+      const statsToUse = ignoreHidden
+        ? STATS.filter(s => visibleStats[s])
+        : STATS; // include all stats
+      
+      statsToUse.forEach(s => {
         sums[s] = combo.reduce((acc,m)=>acc+m[s],0);
         lvls[s] = level_for(sums[s]);
       });
+      //
       const min_lvl = Math.min(...Object.values(lvls));
       results.push({combo:combo.map(m=>m.name).join(","), sums, lvls, min_lvl});
     });

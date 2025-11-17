@@ -3045,7 +3045,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
 // body
       )
@@ -3068,7 +3068,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
             e('td',null,r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
           )))
 // body
         )
@@ -3093,7 +3093,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
       )
 // body

@@ -817,7 +817,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     })(),
 // BUTTONS
     e('div',{className:"calc-method-toggle", style:{margin:"10px 0", display:'flex', flexWrap:'wrap', gap:'8px'}},
-      ['total','highest','smart','weighted','balanced','spike','efficiency','synergy','abilityScore','targetLevel'].map(method =>
+      ['total','highest','abilityScore','targetLevel','smart','weighted','balanced','spike','efficiency','synergy'].map(method =>
         e('label',{key:method, style:{
             cursor:'pointer',
             padding:'6px 12px',
@@ -831,14 +831,14 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('input',{type:'radio', checked:calcMethod===method, onChange:()=>setCalcMethod(method), style:{display:'none'}}),
           method === 'total' ? 'Total Level' :
           method === 'highest' ? 'Highest Levels' :
+          method === 'abilityScore' ? 'Ability Score Mode' :
+          method === 'targetLevel' ? 'Target Level Mode' :
           method === 'smart' ? 'Smart Combination' :
           method === 'weighted' ? 'Weighted Power' :
           method === 'balanced' ? 'Balanced Mode' :
           method === 'spike' ? 'Spike Mode' :
           method === 'efficiency' ? 'Efficiency Mode' :
-          method === 'synergy' ? 'Synergy Mode' :
-          method === 'abilityScore' ? 'Ability Score Mode' :
-          'Target Level Mode'
+          'Synergy Mode'
         )
       )
     ),
@@ -900,14 +900,14 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
       e('h3', null, 
         calcMethod === 'total'      ? 'Top Total Combos (Combos ranked by the sum of all stat levels, maximizing overall stat coverage)' :
         calcMethod === 'highest'    ? 'Top Combos (Combos ranked by number of high-level stats, prioritizing modules with more top-tier stats)' :
+        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-game scoring: calculates official game ability score based on visible stats and thresholds)' :
+        calcMethod === 'targetLevel'    ? 'Target Level Mode (Ranks combos by closeness to your custom target levels for each stat, capping each stat at its target)' :
         calcMethod === 'smart'      ? 'Smart Combination Results (Hybrid ranking: prioritizes high-level stats first, then total levels, then raw stat values for tie-breaking)' :
         calcMethod === 'weighted'   ? 'Weighted Power Mode (Exponential weighting of stat levels, giving more importance to higher-level stats)' :
         calcMethod === 'balanced'   ? 'Balanced Mode (Ranks combos by even distribution of stats, minimizing variance between stat levels)' :
         calcMethod === 'spike'      ? 'Spike Mode (Focuses on maximizing a single peak stat, then total levels as tie-breaker)' :
         calcMethod === 'efficiency' ? 'Efficiency Mode (Optimizes raw stat sum per number of high-level stats, rewarding combos with more value per high-level stat)' :
         calcMethod === 'synergy'    ? 'Synergy Mode (Ranks combos based on complementary stat pairs, rewarding combinations that work well together)' :
-        calcMethod === 'abilityScore'    ? 'Ability Score Mode (In-game scoring: calculates official game ability score based on visible stats and thresholds)' :
-        calcMethod === 'targetLevel'    ? 'Target Level Mode (Ranks combos by closeness to your custom target levels for each stat, capping each stat at its target)' :
         'Top Combos'
       ),
       e('table',null,
@@ -925,7 +925,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
 // body
       )
@@ -948,7 +948,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
             e('td',null,r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
           )))
 // body
         )
@@ -973,7 +973,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
         e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
           e('td',null,r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
-          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, ignoreHidden )) // SCORE CALCULATOR
+          e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
       )
 // body

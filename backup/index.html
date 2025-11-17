@@ -356,7 +356,9 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     }
   }
 
-  const totalAttrPower = TOTAL_ATTR_POWER_MAP[totalAttrValue] || 0;
+  const clampedValue = Math.min(totalAttrValue, 120);
+  const totalAttrPower = TOTAL_ATTR_POWER_MAP[clampedValue] || 0;
+
   return thresholdPower + totalAttrPower;
 }
 // SCORE CALCULATOR 👆 

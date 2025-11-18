@@ -12,16 +12,13 @@ A web-based tool to calculate the best combinations of modules in **Blue Protoco
 
 ## Features
 
-* 📥 **CSV import** and
-* 📤 **CSV export for all result tables**
-- **Import modules from CSV** with all relevant stats.
-- **Dynamic module table** with editable stat values.
+- 📥**Import modules from CSV** with all relevant stats.
+- 📥**Dynamic module table** with editable stat values.
 * 💡 **Preset builds** from Maxroll (Falconry, Icicle, Vanguard, etc.)
 * 🛠 **DPS / Healer / Tank / Support stat filters**
 - **Stat visibility toggle** – choose which stats to display.
 - **Add or remove modules** on the fly.
-* 🔥 **Auto-calculates the strongest module combos**
-- **Calculate best combinations**:
+* 🔥 **Auto-calculates the strongest module combos**:
   - **Top Total** – highest overall levels.
   - **Highest Levels** – prioritizes modules with more high-level stats.
   - **Best Balanced** – maximizes minimum stat levels.
@@ -38,6 +35,150 @@ A web-based tool to calculate the best combinations of modules in **Blue Protoco
 ## 🚀 **Live Demo**
 
 👉 **[https://asgharkapk.github.io/star-resonance-module-optimizer/](https://asgharkapk.github.io/star-resonance-module-optimizer/)**
+
+---
+
+# 🔢 **Calculation Methods**
+
+Your calculator supports **10 different combination-ranking modes**, each using a different sorting algorithm.
+Below is the **complete list with short explanations matching your code**.
+
+---
+
+## **1️⃣ Total Level Mode (`total`)**
+
+Ranks combos by the **sum of all stat levels**.
+Good for builds that care about **overall stat coverage**.
+
+Formula:
+`score = sum(levels of all stats)`
+
+---
+
+## **2️⃣ Highest Levels Mode (`highest`)**
+
+Ranks combos by **how many high-level stats** they have.
+Level 6 > level 5 > level 4 → all the way down.
+Great for builds that prioritize **top-tier stats**.
+
+---
+
+## **3️⃣ Ability Score Mode (`abilityScore`)**
+
+Uses the game-like **Ability Score formula** (your `calculateSolutionScore`).
+This is your **in-game accurate scoring mode**.
+
+---
+
+## **4️⃣ Target Level Mode (`targetLevel`)**
+
+Ranks combos by how close they are to your **custom target level** for each stat.
+Level is always computed normally — target only affects scoring.
+
+Good for:
+
+* hitting breakpoints
+* build planning
+* “I want level 4 Crit, level 3 ATK SPD, etc.”
+
+Lower difference = better.
+
+---
+
+## **5️⃣ Smart Combination Mode (`smart`)**
+
+Hybrid mode that combines 3 layers:
+
+1. **More high-level stats first**
+2. If tied → **higher total levels**
+3. If tied → **higher raw stat sum**
+
+This is the most “intelligent” all-around scorer.
+
+---
+
+## **6️⃣ Weighted Power Mode (`weighted`)**
+
+Higher levels are given **exponential value**:
+
+```
+weights = [0, 1, 2, 4, 8, 16, 32]
+```
+
+Level 6 is **32×** stronger than level 1.
+
+Good for:
+
+* DPS builds
+* high-impact stats
+* crit / special-attack stacking
+
+---
+
+## **7️⃣ Balanced Mode (`balanced`)**
+
+Ranks combos by **even distribution** of stat levels.
+
+Prefers:
+
+* higher average
+* **lower variance**
+
+Great for hybrid roles or supports that want balanced stats.
+
+---
+
+## **8️⃣ Spike Mode (`spike`)**
+
+Focuses on **maximizing your single strongest stat**.
+
+If two combos have the same highest-level stat:
+→ higher total level wins.
+
+Good for:
+
+* “max Crit”
+* “max Special Attack”
+* any single-stat spike playstyle
+
+---
+
+## **9️⃣ Efficiency Mode (`efficiency`)**
+
+Ranks combos by:
+
+```
+(raw stat sum) / (number of high-level stats)
+```
+
+This rewards:
+
+* combos that give **a lot of stats per high-level slot**
+* efficient module value
+
+Useful for cost/value analysis.
+
+---
+
+## **🔟 Synergy Mode (`synergy`)**
+
+Rewards combos where **paired stats rise together**.
+
+Default synergy pairs:
+
+```
+Attack SPD ↔ Crit Focus
+Healing Boost ↔ Healing Enhance
+Strength Boost ↔ Special Attack
+```
+
+Extra synergy is added when both stats rise in parallel.
+
+Best for:
+
+* classes that rely on stat pairs
+* healer builds
+* combo-based scaling
 
 ---
 

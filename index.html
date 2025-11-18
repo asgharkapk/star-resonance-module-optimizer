@@ -2777,6 +2777,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
     window.appData = data;
   },[data, calcMethod, visibleStats, ignoreHidden, targetLevels]); // ✅ added visibleStats + ignoreHidden
 
+  const bestCombo = bestResults?.topTotal?.[0]?.combo?.split(',') || [];
+  
 // Render START
   return e('div',null,
     e('div', { style:{ marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' } },
@@ -2881,7 +2883,7 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
 // body
       e('tbody', null, data.map((row, i) =>
         e('tr', { key: i },
-          e('td', { className: 'level-6' }, row.name),
+          e('td', { className: 'level-6', style: bestCombo.includes(row.name) ? { backgroundColor: 'var(--best-combo-highlight)' } : {} }, row.name),
           STATS.map(s => visibleStats[s] ? e('td', {
             key: s,
             className: getLevelClass(level_for(row[s]))

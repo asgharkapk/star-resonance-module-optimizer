@@ -2201,7 +2201,7 @@ input[name="name"]{ width:120px; }
 .btn-blue { background:var(--selectall-btn-bg); color:var(--selectall-btn-txt); }
 .btn-red { background:var(--clear-btn-bg); color:var(--clear-btn-txt); }
 .btn-green { background:var(--preset-btn-bg); color:var(--preset-btn-txt); }
-.best-combo td { background:var(--best-combo-highlight); font-weight:bold; }
+.best-combo { background:var(--best-combo-highlight); font-weight:bold; }
 
 .stats-toggle {
   display: grid;
@@ -3105,8 +3105,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('th', null, 'Ability Score') // SCORE CALCULATOR
         )),
 // body
-        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-          e('td',null,r.combo),
+        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i},
+          e('td',{className:i===0?'best-combo':''},r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
@@ -3128,8 +3128,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('th', null, 'Ability Score') // SCORE CALCULATOR
           )),
 // body
-          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-            e('td',null,r.combo),
+          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i},
+            e('td',{className:i===0?'best-combo':''},r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
           )))
@@ -3153,8 +3153,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           ) : null),
           e('th', null, 'Ability Score') // SCORE CALCULATOR
         )),
-        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-          e('td',null,r.combo),
+        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i},
+          e('td',{className:i===0?'best-combo':''},r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, var(--theme-satlight))` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))

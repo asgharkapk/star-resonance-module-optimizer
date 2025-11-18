@@ -75,7 +75,7 @@ input[name="name"]{ width:120px; }
 .btn-blue { background:#0a64ad; color:white; }
 .btn-red { background:#c00; color:white; }
 .btn-green { background:#0a7a0a; color:white; }
-.best-combo td { background:#ffd700; font-weight:bold; }
+.best-combo { background:#ffd700; font-weight:bold; }
 
 .stats-toggle {
   display: grid;
@@ -924,8 +924,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('th', null, 'Ability Score') // SCORE CALCULATOR
         )),
 // body
-        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-          e('td',null,r.combo),
+        e('tbody',null,bestResults.topTotal.map((r,i)=>e('tr',{key:i},
+          e('td',{className:i===0?'best-combo':''},r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))
@@ -947,8 +947,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           e('th', null, 'Ability Score') // SCORE CALCULATOR
           )),
 // body
-          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-            e('td',null,r.combo),
+          e('tbody',null,bestResults.topPerStat[stat].map((r,i)=>e('tr',{key:i},
+            e('td',{className:i===0?'best-combo':''},r.combo),
             STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
           )))
@@ -972,8 +972,8 @@ function calculateSolutionScore(modules, visibleStatsMap, ignoreHidden=true) {
           ) : null),
           e('th', null, 'Ability Score') // SCORE CALCULATOR
         )),
-        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i,className:i===0?'best-combo':''},
-          e('td',null,r.combo),
+        e('tbody',null,bestResults.balanced.map((r,i)=>e('tr',{key:i},
+          e('td',{className:i===0?'best-combo':''},r.combo),
           STATS.map(s=>visibleStats[s]?e('td',{key:s,className:getLevelClass(r.lvls[s])},r.lvls[s]):null),
           e('td', { style: { backgroundColor: `hsl(${calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )}, 70%, 80%)` } }, calculateSolutionScore(data.filter(m => r.combo.split(',').includes(m.name)), visibleStats, false )) // SCORE CALCULATOR
         )))

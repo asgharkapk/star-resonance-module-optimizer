@@ -109,5 +109,23 @@ This project is open-source and free to use. Attribution appreciated.
 
 
 
-Do you want me to make that version as well?
-```
+<footer style="
+  text-align:center; 
+  padding:15px; 
+  background: linear-gradient(90deg, #0a64ad, #00aaff); 
+  color:white; 
+  margin-top:20px; 
+  border-radius:10px; 
+  font-weight:bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height:1.6;
+">
+  &copy; 2025 <span style="color:#ffd700;">Blue Protocol Calculator</span> 🌟<br>
+  Made for you with ❤️ and lots of ☕<br>
+  Big thanks to 
+  <a href="https://maxroll.gg/blue-protocol/resources/modules-guide" target="_blank" style="color:#ffdd00; text-decoration:underline;">Maxroll</a> 
+  for the awesome guides and in-game icons! 🎨<br>
+  Special thanks to 
+  <a href="https://github.com/fudiyangjin/StarResonanceAutoMod" target="_blank" style="color:#ffdd00; text-decoration:underline;">StarResonanceAutoMod</a> 
+  for the score calculator code! 🔢✨
+</footer>

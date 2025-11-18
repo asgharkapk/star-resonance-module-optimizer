@@ -199,7 +199,8 @@ Feel free to open:
 
 ## Credits
 
-* Stat icons and module information: [Maxroll Blue Protocol Guide](https://maxroll.gg/blue-protocol/resources/modules-guide)
+* Stat icons and module information:➡️ **[Maxroll Blue Protocol Guide](https://maxroll.gg/blue-protocol/resources/modules-guide)**
+* Score calculator code:➡️ **[StarResonanceAutoMod](https://github.com/fudiyangjin/StarResonanceAutoMod)**
 * Created with ❤️ and ☕
 
 ---

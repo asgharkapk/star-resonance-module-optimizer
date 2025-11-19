@@ -4,55 +4,145 @@
 <meta charset="UTF-8">
 <title>Module Log → CSV Converter</title>
 <style>
+/* CSS Variables for Light Theme */
+:root {
+  --bg-main: #f5f5f5;
+  --text-main: #000;
+  --textarea-bg: #fff;
+  --button-bg: #2196F3;
+  --button-color: #fff;
+  --pre-bg: #fff;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-main: #1c1c1c;
+  --text-main: #eee;
+  --textarea-bg: #2a2a2a;
+  --button-bg: #4CAF50;
+  --button-color: #fff;
+  --pre-bg: #808080;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f5f5f5;
+  background: var(--bg-main);
+  color: var(--text-main);
   padding: 20px;
+  transition: background 0.3s, color 0.3s;
 }
+
 textarea {
   width: 100%;
   height: 300px;
   font-family: monospace;
+  background: var(--textarea-bg);
+  color: var(--text-main);
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background 0.3s, color 0.3s;
 }
+
+pre {
+  background: var(--pre-bg);
+  padding: 10px;
+  white-space: pre-wrap;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
 button {
   padding: 10px 20px;
   margin-top: 10px;
   font-size: 16px;
+  color: var(--button-color);
+  background: var(--button-bg);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
 }
-pre {
-  background: #fff;
-  padding: 10px;
-  white-space: pre-wrap;
+
+/* Top-right theme switch */
+#themeToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Instruction box */
+.instruction-box {
+  background: var(--textarea-bg);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 700px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.instruction-box ol {
+  line-height: 1.8;
+  font-size: 16px;
+  padding-left: 20px;
+  color: var(--text-main);
+}
+
+.btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--button-color);
+  background: var(--button-bg);
+  transition: background 0.3s, color 0.3s;
+}
+
+.btn.green { background: #4CAF50; }
+.btn.blue { background: #2196F3; }
+.btn.orange { background: #FF9800; }
+
+.inline-code {
+  background: var(--pre-bg);
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: background 0.3s, color 0.3s;
 }
 </style>
 </head>
 <body>
 
+<!-- Theme toggle button -->
+<div id="themeToggle">🌙</div>
+
 <h2>Module Log → CSV Converter (Auto Names X1, X2...)</h2>
 
-<h3 style="margin-top:30px;">How to Export Module CSV from Game</h3>
-<div style="background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); max-width:700px;">
-  <ol style="line-height:1.8; font-size:16px; padding-left:20px;">
+<h3 class="section-title">How to Export Module CSV from Game</h3>
+<div class="instruction-box">
+  <ol>
     <li>Download and install 
       <a href="https://npcap.com/#download" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#4CAF50; color:#fff; border-radius:5px; cursor:pointer;">Npcap</button>
+        <button class="btn green">Npcap</button>
       </a>
     </li>
     <li>Download 
       <a href="https://github.com/fudiyangjin/StarResonanceAutoMod" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#2196F3; color:#fff; border-radius:5px; cursor:pointer;">StarResonanceAutoMod</button>
+        <button class="btn blue">StarResonanceAutoMod</button>
       </a>
     </li>
     <li>Run the game but <strong>do not login</strong>.</li>
     <li>Open a command prompt in the StarResonanceAutoMod folder.</li>
-    <li>Run <code style="background:#eee; padding:2px 5px; border-radius:3px;">.\StarResonanceAutoMod.exe -a --debug -lang en</code></li>
+    <li>Run <p><code class="inline-code">.\StarResonanceAutoMod.exe -a --debug -lang en</code></p></li>
     <li>Login to the game and select your character.</li>
     <li>The log file will be generated automatically.</li>
     <li>Provide the log file to this converter webpage.</li>
     <li>Download the CSV output.</li>
     <li>Use the CSV with the 
       <a href="https://asgharkapk.github.io/star-resonance-module-optimizer/" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#FF9800; color:#fff; border-radius:5px; cursor:pointer;">Module Calculator</button>
+        <button class="btn orange">Module Calculator</button>
       </a>
     </li>
   </ol>
@@ -70,6 +160,36 @@ pre {
 <a id="downloadLink" style="display:none">Download CSV</a>
 
 <script>
+// Theme toggle button
+const themeToggle = document.getElementById('themeToggle');
+
+function setTheme(theme) {
+  if(theme === 'dark') {
+    document.documentElement.setAttribute('data-theme','dark');
+    themeToggle.textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = '🌙';
+  }
+  localStorage.setItem('theme', theme);
+}
+
+// Detect system theme or saved theme
+const savedTheme = localStorage.getItem('theme');
+if(savedTheme) {
+  setTheme(savedTheme);
+} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  setTheme('dark');
+} else {
+  setTheme('light');
+}
+
+// Toggle theme on button click
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
 // File upload
 document.getElementById("fileInput").addEventListener("change", function() {
     const file = this.files[0];
@@ -82,7 +202,7 @@ document.getElementById("fileInput").addEventListener("change", function() {
     reader.readAsText(file);
 });
 
-// Converter
+// CSV Converter
 function convert() {
     const text = document.getElementById("input").value;
     const lines = text.split("\n");
@@ -91,8 +211,8 @@ function convert() {
     let current = null;
     const allStatsSet = new Set();
 
-    const moduleRegex = /Module:/;       // detect module start
-    const statRegex = /-\s([^:]+):\s(\d+)/; // detect stats
+    const moduleRegex = /Module:/;
+    const statRegex = /-\s([^:]+):\s(\d+)/;
 
     for (let line of lines) {
         if (moduleRegex.test(line)) {
@@ -100,7 +220,6 @@ function convert() {
             current = { stats: {} };
             continue;
         }
-
         let s = line.match(statRegex);
         if (s && current) {
             const statName = s[1].trim();
@@ -109,31 +228,20 @@ function convert() {
             allStatsSet.add(statName);
         }
     }
-
     if (current) modules.push(current);
 
-    // Dynamically detect stat order
     const statOrder = Array.from(allStatsSet);
-
-    // CSV header
     let csv = "Module," + statOrder.join(",") + "\n";
 
-    // Fill CSV rows: X1, X2, X3...
-    modules.forEach((m, i) => {
+    modules.forEach((m,i) => {
         const name = `X${i+1}`;
         const row = [name];
-
-        for (let stat of statOrder) {
-            row.push(m.stats[stat] ? m.stats[stat] : "");
-        }
-
+        for (let stat of statOrder) row.push(m.stats[stat] || "");
         csv += row.join(",") + "\n";
     });
 
-    // Output to screen
     document.getElementById("output").textContent = csv;
 
-    // Download link
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.getElementById("downloadLink");

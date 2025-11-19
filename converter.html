@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Module Log → CSV Converter</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
+textarea {
+  width: 100%;
+  height: 300px;
+  font-family: monospace;
+}
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+pre {
+  background: #fff;
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>Module Log → CSV Converter</h2>
+
+<textarea id="input" placeholder="Paste your module_parser logs here..."></textarea>
+<br>
+<button onclick="convert()">Convert to CSV</button>
+
+<h3>CSV Output</h3>
+<pre id="output"></pre>
+<a id="downloadLink" style="display:none">Download CSV</a>
+
+<script>
+function convert() {
+    const text = document.getElementById("input").value;
+    const lines = text.split("\n");
+
+    const modules = [];
+    let current = null;
+
+    const moduleRegex = /Module:\s(.+)\s\(ID:\s(\d+)\)/;
+    const statRegex = /-\s([^:]+):\s(\d+)/;
+
+    for (let line of lines) {
+        let m = line.match(moduleRegex);
+        if (m) {
+            // start new module
+            if (current) modules.push(current);
+            current = { name: m[1].trim(), id: m[2].trim(), stats: {} };
+            continue;
+        }
+
+        let s = line.match(statRegex);
+        if (s && current) {
+            current.stats[s[1].trim()] = s[2].trim();
+        }
+    }
+
+    if (current) modules.push(current);
+
+    // gather all stat names to make unified CSV columns
+    const allStatNames = new Set();
+    modules.forEach(m => {
+        Object.keys(m.stats).forEach(s => allStatNames.add(s));
+    });
+    const statsList = Array.from(allStatNames);
+
+    // create CSV rows
+    let csv = "Name,ID," + statsList.join(",") + "\n";
+
+    for (let m of modules) {
+        const row = [
+            `"${m.name}"`,
+            `"${m.id}"`
+        ];
+        for (let stat of statsList) {
+            row.push(m.stats[stat] ? m.stats[stat] : "");
+        }
+        csv += row.join(",") + "\n";
+    }
+
+    // show output
+    document.getElementById("output").textContent = csv;
+
+    // download link
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.getElementById("downloadLink");
+    link.href = url;
+    link.download = "modules.csv";
+    link.style.display = "inline-block";
+    link.textContent = "Download CSV";
+}
+</script>
+
+</body>
+</html>

@@ -3226,7 +3226,10 @@ document.getElementById('csvInput').addEventListener('change', function (e) {
     });
 
     const formatted = rows.map(row => {
-      const nameKey = Object.keys(row).find(k => k.toLowerCase().includes('module name')) || 'name';
+      const nameKey = Object.keys(row).find(k => {
+        const key = k.toLowerCase().replace(/[^a-z]/g, ''); // remove spaces, underscores, etc.
+        return key.includes('modulename') || key === 'module';
+      }) || 'name';
       const newRow = { name: row[nameKey] || 'Module' };
       STATS.forEach(s => {
         newRow[s] = Number((row[s] || "0").trim());

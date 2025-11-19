@@ -207,14 +207,16 @@ themeToggle.addEventListener('click', () => {
   setTheme(currentTheme === 'dark' ? 'light' : 'dark');
 });
 
-// File upload
+// File upload + auto convert
 document.getElementById("fileInput").addEventListener("change", function() {
     const file = this.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        document.getElementById("input").value = e.target.result;
+        const content = e.target.result;
+        document.getElementById("input").value = content;
+        convert(); // automatically convert after file is loaded
     };
     reader.readAsText(file);
 });

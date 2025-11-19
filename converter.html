@@ -128,6 +128,117 @@ button {
   opacity: 0.85;
 }
 
+/* FAQ styles */
+
+/* FAQ Container */
+.instruction-box {
+  background: var(--bg-main, #fff);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: 10px;
+}
+
+/* Each FAQ item */
+.instruction-box details {
+  background: var(--pre-bg, #f8f8f8);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: all .25s ease;
+}
+
+/* Summary header */
+.instruction-box summary {
+  cursor: pointer;
+  padding: 15px 18px;
+  font-size: 16px;
+  list-style: none;
+  user-select: none;
+}
+
+.instruction-box summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Add a ▼ arrow */
+.instruction-box summary::after {
+  content: "▼";
+  float: right;
+  transition: transform .25s ease;
+  opacity: 0.6;
+}
+
+/* Rotate arrow when open */
+.instruction-box details[open] summary::after {
+  transform: rotate(-180deg);
+  opacity: 1;
+}
+
+/* FAQ content */
+.faq-content {
+  padding: 15px 18px 20px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 15px;
+  animation: faq-open .25s ease;
+}
+
+/* Smooth open animation */
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Inline code style */
+.inline-code {
+  background: var(--bg-main, #fff);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+/* FAQ image styling */
+.faq-img {
+  width: 100%;
+  max-width: 400px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  display: block;
+}
+
+/* Make images appear in their own box */
+.faq-img {
+  background: var(--bg-main, #fff);
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Only ONE <details> stays open */
+.instruction-box details summary {
+  pointer-events: auto;
+}
+.instruction-box details summary:focus {
+  outline: none;
+}
+.instruction-box details[open] > summary {
+  background: var(--pre-bg, #f8f8f8);
+}
+
+/* JS-free one-at-a-time trick */
+.instruction-box details summary {
+  position: relative;
+}
+
 </style>
 </head>
 <body>
@@ -175,6 +286,92 @@ button {
 <h3>CSV Output</h3>
 <pre id="output"></pre>
 <a id="downloadLink" class="btn download-link">Download CSV</a>
+
+<h3>FAQ (Common Questions)</h3>
+
+<div class="instruction-box faq-container">
+
+  <details class="faq-item">
+    <summary><strong>How do I open Command Prompt in a folder?</strong></summary>
+    <div class="faq-content">
+
+      <div class="faq-box">
+        <strong>Method 1:</strong><br>
+        Open the folder → click the address bar → type <span class="inline-code">cmd</span> → press Enter.
+        <img src="https://i.sstatic.net/M6nvnuIp.png" class="faq-img">
+      </div>
+
+      <div class="faq-box">
+        <strong>Method 2:</strong><br>
+        Hold <span class="inline-code">Shift</span> → right-click inside the folder → select <strong>"Open PowerShell window here"</strong>.
+        <img src="https://i.sstatic.net/BtCUI.png" class="faq-img">
+      </div>
+
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>The converter is not detecting stats — why?</strong></summary>
+    <div class="faq-content">
+      • Make sure your log is created using:<br>
+      <span class="inline-code">.\StarResonanceAutoMod.exe -a --debug -lang en</span><br>
+      • Only logs containing module stats will work.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Why do module names show as X1, X2, X3...?</strong></summary>
+    <div class="faq-content">
+      The converter ignores original IDs and names and generates clean auto-names (X1, X2…).
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Download CSV button does not appear?</strong></summary>
+    <div class="faq-content">
+      It only appears when:<br>
+      • A valid log file is parsed<br>
+      • CSV output is generated successfully.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Theme is not applying?</strong></summary>
+    <div class="faq-content">
+      • Refresh with <span class="inline-code">Ctrl + F5</span>.<br>
+      • Theme preference is saved in <span class="inline-code">localStorage</span>.<br>
+      • Page follows system dark mode by default.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Why is stat order random?</strong></summary>
+    <div class="faq-content">
+      The converter detects all stats found in the log and uses that dynamic list. No fixed stat list is used.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>File upload does nothing?</strong></summary>
+    <div class="faq-content">
+      • File must be <span class="inline-code">.log</span> or <span class="inline-code">.txt</span>.<br>
+      • Large logs may take a few seconds to load.<br>
+      • Some browsers require clicking anywhere once before file input works.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Output looks empty or incorrect?</strong></summary>
+    <div class="faq-content">
+      Log must contain lines like:<br>
+      <span class="inline-code">Module:</span><br>
+      <span class="inline-code"> - Attack SPD: 7</span><br>
+      <span class="inline-code"> - Crit Focus: 2</span><br>
+      If the format differs, the converter cannot detect stats.
+    </div>
+  </details>
+
+</div>
 
 <script>
 // Theme toggle button
@@ -270,6 +467,16 @@ function convert() {
     link.style.display = "inline-block"; // show link
     link.textContent = "Download CSV";
 }
+
+document.querySelectorAll('.instruction-box details').forEach(d => {
+  d.addEventListener('toggle', () => {
+    if (d.open) {
+      document.querySelectorAll('.instruction-box details').forEach(other => {
+        if (other !== d) other.removeAttribute('open');
+      });
+    }
+  });
+});
 </script>
 
 </body>

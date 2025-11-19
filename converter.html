@@ -74,7 +74,7 @@ button {
 }
 
 /* Instruction box */
-.instruction-box {
+.howto-box {
   background: var(--textarea-bg);
   padding: 20px;
   border-radius: 10px;
@@ -83,7 +83,7 @@ button {
   transition: background 0.3s, color 0.3s;
 }
 
-.instruction-box ol {
+.howto-box ol {
   line-height: 1.8;
   font-size: 16px;
   padding-left: 20px;
@@ -105,12 +105,14 @@ button {
 .btn.blue { background: #2196F3; }
 .btn.orange { background: #FF9800; }
 
+/*
 .inline-code {
   background: var(--pre-bg);
   padding: 2px 5px;
   border-radius: 3px;
   transition: background 0.3s, color 0.3s;
 }
+*/
 
 .download-link {
   display: none;           /* hidden by default */
@@ -239,6 +241,25 @@ button {
   position: relative;
 }
 
+.custom-file {
+  display: inline-block;
+  padding: 10px 18px;
+  background: #2196F3;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.custom-file:hover {
+  background: #0b7dda;
+}
+
+#fileInput {
+  display: none; /* hide real input */
+}
+
 </style>
 </head>
 <body>
@@ -248,8 +269,8 @@ button {
 
 <h2>Module Log → CSV Converter (Auto Names X1, X2...)</h2>
 
-<h3 class="section-title">How to Export Module CSV from Game</h3>
-<div class="instruction-box">
+<h3 class="section-title">How to Export Module CSV from Game:</h3>
+<div class="howto-box">
   <ol>
     <li>Download and install 
       <a href="https://npcap.com/#download" target="_blank">
@@ -262,7 +283,7 @@ button {
       </a>
     </li>
     <li>Run the game but <strong>do not login</strong>.</li>
-    <li>Open a command prompt in the StarResonanceAutoMod folder.</li>
+    <li>Open a command prompt in the <strong>StarResonanceAutoMod</strong> folder.</li>
     <li>Run <p><code class="inline-code">.\StarResonanceAutoMod.exe -a --debug -lang en</code></p></li>
     <li>Login to the game and select your character.</li>
     <li>The log file will be generated automatically.</li>
@@ -276,6 +297,8 @@ button {
   </ol>
 </div>
 
+<br><br>
+<label for="fileInput" class="custom-file">Choose Log File</label>
 <input type="file" id="fileInput" accept=".log,.txt">
 <br><br>
 

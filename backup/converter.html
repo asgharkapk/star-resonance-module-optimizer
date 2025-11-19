@@ -22,12 +22,44 @@ button {
 pre {
   background: #fff;
   padding: 10px;
+  white-space: pre-wrap;
 }
 </style>
 </head>
 <body>
 
 <h2>Module Log → CSV Converter (Auto Names X1, X2...)</h2>
+
+<h3 style="margin-top:30px;">How to Export Module CSV from Game</h3>
+<div style="background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); max-width:700px;">
+  <ol style="line-height:1.8; font-size:16px; padding-left:20px;">
+    <li>Download and install 
+      <a href="https://npcap.com/#download" target="_blank">
+        <button style="margin-left:10px; padding:5px 10px; border:none; background:#4CAF50; color:#fff; border-radius:5px; cursor:pointer;">Npcap</button>
+      </a>
+    </li>
+    <li>Download 
+      <a href="https://github.com/fudiyangjin/StarResonanceAutoMod" target="_blank">
+        <button style="margin-left:10px; padding:5px 10px; border:none; background:#2196F3; color:#fff; border-radius:5px; cursor:pointer;">StarResonanceAutoMod</button>
+      </a>
+    </li>
+    <li>Run the game but <strong>do not login</strong>.</li>
+    <li>Open a command prompt in the StarResonanceAutoMod folder.</li>
+    <li>Run <code style="background:#eee; padding:2px 5px; border-radius:3px;">.\StarResonanceAutoMod.exe -a --debug -lang en</code></li>
+    <li>Login to the game and select your character.</li>
+    <li>The log file will be generated automatically.</li>
+    <li>Provide the log file to this converter webpage.</li>
+    <li>Download the CSV output.</li>
+    <li>Use the CSV with the 
+      <a href="https://asgharkapk.github.io/star-resonance-module-optimizer/" target="_blank">
+        <button style="margin-left:10px; padding:5px 10px; border:none; background:#FF9800; color:#fff; border-radius:5px; cursor:pointer;">Module Calculator</button>
+      </a>
+    </li>
+  </ol>
+</div>
+
+<input type="file" id="fileInput" accept=".log,.txt">
+<br><br>
 
 <textarea id="input" placeholder="Paste your module_parser logs here..."></textarea>
 <br>
@@ -38,15 +70,29 @@ pre {
 <a id="downloadLink" style="display:none">Download CSV</a>
 
 <script>
+// File upload
+document.getElementById("fileInput").addEventListener("change", function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById("input").value = e.target.result;
+    };
+    reader.readAsText(file);
+});
+
+// Converter
 function convert() {
     const text = document.getElementById("input").value;
     const lines = text.split("\n");
 
     const modules = [];
     let current = null;
+    const allStatsSet = new Set();
 
-    const moduleRegex = /Module:/;  // detect module start
-    const statRegex = /-\s([^:]+):\s(\d+)/;  // detect stats
+    const moduleRegex = /Module:/;       // detect module start
+    const statRegex = /-\s([^:]+):\s(\d+)/; // detect stats
 
     for (let line of lines) {
         if (moduleRegex.test(line)) {
@@ -57,24 +103,17 @@ function convert() {
 
         let s = line.match(statRegex);
         if (s && current) {
-            current.stats[s[1].trim()] = s[2].trim();
+            const statName = s[1].trim();
+            const statValue = s[2].trim();
+            current.stats[statName] = statValue;
+            allStatsSet.add(statName);
         }
     }
 
     if (current) modules.push(current);
 
-    // Fixed stat order
-    const statOrder = [
-        "Luck Focus",
-        "Armor",
-        "Attack SPD",
-        "Crit Focus",
-        "Cast Focus",
-        "Healing Enhance",
-        "Elite Strike",
-        "Special Attack",
-        "Resistance"
-    ];
+    // Dynamically detect stat order
+    const statOrder = Array.from(allStatsSet);
 
     // CSV header
     let csv = "Module," + statOrder.join(",") + "\n";

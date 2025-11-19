@@ -111,6 +111,24 @@ button {
   border-radius: 3px;
   transition: background 0.3s, color 0.3s;
 }
+
+.download-link {
+  display: none;           /* hidden by default */
+  margin-top: 10px;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: var(--button-color);
+  background: var(--button-bg);
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  display: inline-block;   /* will be set inline in JS when ready */
+}
+
+.download-link:hover {
+  opacity: 0.85;
+}
+
 </style>
 </head>
 <body>
@@ -157,7 +175,7 @@ button {
 
 <h3>CSV Output</h3>
 <pre id="output"></pre>
-<a id="downloadLink" style="display:none">Download CSV</a>
+<a id="downloadLink" class="btn download-link">Download CSV</a>
 
 <script>
 // Theme toggle button
@@ -244,10 +262,11 @@ function convert() {
 
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
+    // When CSV is ready
     const link = document.getElementById("downloadLink");
     link.href = url;
     link.download = "modules.csv";
-    link.style.display = "inline-block";
+    link.style.display = "inline-block"; // show link
     link.textContent = "Download CSV";
 }
 </script>

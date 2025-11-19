@@ -27,7 +27,7 @@ pre {
 </head>
 <body>
 
-<h2>Module Log → CSV Converter</h2>
+<h2>Module Log → CSV Converter (Auto Names X1, X2...)</h2>
 
 <textarea id="input" placeholder="Paste your module_parser logs here..."></textarea>
 <br>
@@ -45,15 +45,13 @@ function convert() {
     const modules = [];
     let current = null;
 
-    const moduleRegex = /Module:\s(.+)\s\(ID:\s(\d+)\)/;
-    const statRegex = /-\s([^:]+):\s(\d+)/;
+    const moduleRegex = /Module:/;  // detect module start
+    const statRegex = /-\s([^:]+):\s(\d+)/;  // detect stats
 
     for (let line of lines) {
-        let m = line.match(moduleRegex);
-        if (m) {
-            // start new module
+        if (moduleRegex.test(line)) {
             if (current) modules.push(current);
-            current = { name: m[1].trim(), id: m[2].trim(), stats: {} };
+            current = { stats: {} };
             continue;
         }
 
@@ -65,31 +63,38 @@ function convert() {
 
     if (current) modules.push(current);
 
-    // gather all stat names to make unified CSV columns
-    const allStatNames = new Set();
-    modules.forEach(m => {
-        Object.keys(m.stats).forEach(s => allStatNames.add(s));
-    });
-    const statsList = Array.from(allStatNames);
+    // Fixed stat order
+    const statOrder = [
+        "Luck Focus",
+        "Armor",
+        "Attack SPD",
+        "Crit Focus",
+        "Cast Focus",
+        "Healing Enhance",
+        "Elite Strike",
+        "Special Attack",
+        "Resistance"
+    ];
 
-    // create CSV rows
-    let csv = "Name,ID," + statsList.join(",") + "\n";
+    // CSV header
+    let csv = "Module," + statOrder.join(",") + "\n";
 
-    for (let m of modules) {
-        const row = [
-            `"${m.name}"`,
-            `"${m.id}"`
-        ];
-        for (let stat of statsList) {
+    // Fill CSV rows: X1, X2, X3...
+    modules.forEach((m, i) => {
+        const name = `X${i+1}`;
+        const row = [name];
+
+        for (let stat of statOrder) {
             row.push(m.stats[stat] ? m.stats[stat] : "");
         }
-        csv += row.join(",") + "\n";
-    }
 
-    // show output
+        csv += row.join(",") + "\n";
+    });
+
+    // Output to screen
     document.getElementById("output").textContent = csv;
 
-    // download link
+    // Download link
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.getElementById("downloadLink");

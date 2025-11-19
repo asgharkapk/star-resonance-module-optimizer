@@ -392,10 +392,9 @@ A simple web-based tool to convert Star Resonance module logs into CSV format wi
 3. Run the game but **do not login**.
 4. Open a command prompt in the StarResonanceAutoMod folder.
 5. Run:
-   ```text
+```
    .\StarResonanceAutoMod.exe -a --debug -lang en
 ```
-
 6. Login to the game and select your character.
 7. The log file will be generated automatically.
 8. Provide the log file to this converter webpage.

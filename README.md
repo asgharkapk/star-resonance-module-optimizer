@@ -38,6 +38,8 @@ A web-based tool to calculate the best combinations of modules in **Blue Protoco
 
 👉 **[https://asgharkapk.github.io/star-resonance-module-optimizer/backup/](https://asgharkapk.github.io/star-resonance-module-optimizer/backup/)**
 
+👉 **[https://asgharkapk.github.io/star-resonance-module-optimizer/converter.html](https://asgharkapk.github.io/star-resonance-module-optimizer/converter.html)**
+
 ---
 
 ## 🔢 **Calculation Methods**

@@ -4,60 +4,301 @@
 <meta charset="UTF-8">
 <title>Module Log → CSV Converter</title>
 <style>
+/* CSS Variables for Light Theme */
+:root {
+  --bg-main: #f5f5f5;
+  --text-main: #000;
+  --textarea-bg: #fff;
+  --button-bg: #2196F3;
+  --button-color: #fff;
+  --pre-bg: #fff;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-main: #1c1c1c;
+  --text-main: #eee;
+  --textarea-bg: #2a2a2a;
+  --button-bg: #4CAF50;
+  --button-color: #fff;
+  --pre-bg: #808080;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background: #f5f5f5;
+  background: var(--bg-main);
+  color: var(--text-main);
   padding: 20px;
+  transition: background 0.3s, color 0.3s;
 }
+
 textarea {
   width: 100%;
   height: 300px;
   font-family: monospace;
+  background: var(--textarea-bg);
+  color: var(--text-main);
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background 0.3s, color 0.3s;
 }
+
+pre {
+  background: var(--pre-bg);
+  padding: 10px;
+  white-space: pre-wrap;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
 button {
   padding: 10px 20px;
   margin-top: 10px;
   font-size: 16px;
+  color: var(--button-color);
+  background: var(--button-bg);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
 }
-pre {
-  background: #fff;
+
+/* Top-right theme switch */
+#themeToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Instruction box */
+.howto-box {
+  background: var(--textarea-bg);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 700px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.howto-box ol {
+  line-height: 1.8;
+  font-size: 16px;
+  padding-left: 20px;
+  color: var(--text-main);
+}
+
+.btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--button-color);
+  background: var(--button-bg);
+  transition: background 0.3s, color 0.3s;
+}
+
+.btn.green { background: #4CAF50; }
+.btn.blue { background: #2196F3; }
+.btn.orange { background: #FF9800; }
+
+/*
+.inline-code {
+  background: var(--pre-bg);
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: background 0.3s, color 0.3s;
+}
+*/
+
+.download-link {
+  display: none;           /* hidden by default */
+  margin-top: 10px;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: var(--button-color);
+  background: var(--button-bg);
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.download-link:hover {
+  opacity: 0.85;
+}
+
+/* FAQ styles */
+
+/* FAQ Container */
+.instruction-box {
+  background: var(--bg-main, #fff);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: 10px;
+}
+
+/* Each FAQ item */
+.instruction-box details {
+  background: var(--pre-bg, #f8f8f8);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: all .25s ease;
+}
+
+/* Summary header */
+.instruction-box summary {
+  cursor: pointer;
+  padding: 15px 18px;
+  font-size: 16px;
+  list-style: none;
+  user-select: none;
+}
+
+.instruction-box summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Add a ▼ arrow */
+.instruction-box summary::after {
+  content: "▼";
+  float: right;
+  transition: transform .25s ease;
+  opacity: 0.6;
+}
+
+/* Rotate arrow when open */
+.instruction-box details[open] summary::after {
+  transform: rotate(-180deg);
+  opacity: 1;
+}
+
+/* FAQ content */
+.faq-content {
+  padding: 15px 18px 20px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 15px;
+  animation: faq-open .25s ease;
+}
+
+/* Smooth open animation */
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Inline code style */
+.inline-code {
+  background: var(--bg-main, #fff);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+/* FAQ image styling */
+.faq-img {
+  width: 100%;
+  max-width: 400px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  display: block;
+}
+
+/* Make images appear in their own box */
+.faq-img {
+  background: var(--bg-main, #fff);
   padding: 10px;
-  white-space: pre-wrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+/* Only ONE <details> stays open */
+.instruction-box details summary {
+  pointer-events: auto;
+}
+.instruction-box details summary:focus {
+  outline: none;
+}
+.instruction-box details[open] > summary {
+  background: var(--pre-bg, #f8f8f8);
+}
+
+/* JS-free one-at-a-time trick */
+.instruction-box details summary {
+  position: relative;
+}
+
+.custom-file {
+  display: inline-block;
+  padding: 10px 18px;
+  background: #2196F3;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.custom-file:hover {
+  background: #0b7dda;
+}
+
+#fileInput {
+  display: none; /* hide real input */
+}
+
 </style>
 </head>
 <body>
 
+<!-- Theme toggle button -->
+<div id="themeToggle">🌙</div>
+
 <h2>Module Log → CSV Converter (Auto Names X1, X2...)</h2>
 
-<h3 style="margin-top:30px;">How to Export Module CSV from Game</h3>
-<div style="background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); max-width:700px;">
-  <ol style="line-height:1.8; font-size:16px; padding-left:20px;">
+<h3 class="section-title">How to Export Module CSV from Game:</h3>
+<div class="howto-box">
+  <ol>
     <li>Download and install 
       <a href="https://npcap.com/#download" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#4CAF50; color:#fff; border-radius:5px; cursor:pointer;">Npcap</button>
+        <button class="btn green">Npcap</button>
       </a>
     </li>
     <li>Download 
       <a href="https://github.com/fudiyangjin/StarResonanceAutoMod" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#2196F3; color:#fff; border-radius:5px; cursor:pointer;">StarResonanceAutoMod</button>
+        <button class="btn blue">StarResonanceAutoMod</button>
       </a>
     </li>
     <li>Run the game but <strong>do not login</strong>.</li>
-    <li>Open a command prompt in the StarResonanceAutoMod folder.</li>
-    <li>Run <code style="background:#eee; padding:2px 5px; border-radius:3px;">.\StarResonanceAutoMod.exe -a --debug -lang en</code></li>
+    <li>Open a command prompt in the <strong>StarResonanceAutoMod</strong> folder.</li>
+    <li>Run <p><code class="inline-code">.\StarResonanceAutoMod.exe -a --debug -lang en</code></p></li>
     <li>Login to the game and select your character.</li>
     <li>The log file will be generated automatically.</li>
     <li>Provide the log file to this converter webpage.</li>
     <li>Download the CSV output.</li>
     <li>Use the CSV with the 
       <a href="https://asgharkapk.github.io/star-resonance-module-optimizer/" target="_blank">
-        <button style="margin-left:10px; padding:5px 10px; border:none; background:#FF9800; color:#fff; border-radius:5px; cursor:pointer;">Module Calculator</button>
+        <button class="btn orange">Module Calculator</button>
       </a>
     </li>
   </ol>
 </div>
 
+<br><br>
+<label for="fileInput" class="custom-file">Choose Log File</label>
 <input type="file" id="fileInput" accept=".log,.txt">
 <br><br>
 
@@ -67,22 +308,140 @@ pre {
 
 <h3>CSV Output</h3>
 <pre id="output"></pre>
-<a id="downloadLink" style="display:none">Download CSV</a>
+<a id="downloadLink" class="btn download-link">Download CSV</a>
+
+<h3>FAQ (Common Questions)</h3>
+
+<div class="instruction-box faq-container">
+
+  <details class="faq-item">
+    <summary><strong>How do I open Command Prompt in a folder?</strong></summary>
+    <div class="faq-content">
+
+      <div class="faq-box">
+        <strong>Method 1:</strong><br>
+        Open the folder → click the address bar → type <span class="inline-code">cmd</span> → press Enter.
+        <img src="https://www.digitalcitizen.life/wp-content/uploads/2025/03/open_cmd-25.png" class="faq-img">
+      </div>
+
+      <div class="faq-box">
+        <strong>Method 2:</strong><br>
+        Hold <span class="inline-code">Shift</span> → right-click inside the folder → select <strong>"Open PowerShell window here"</strong>.
+        <img src="https://www.wikihow.com/images/thumb/d/d3/Open-a-Folder-in-Cmd-Step-7.jpg/v4-460px-Open-a-Folder-in-Cmd-Step-7.jpg" class="faq-img">
+      </div>
+
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>The converter is not detecting stats — why?</strong></summary>
+    <div class="faq-content">
+      • Make sure your log is created using:<br>
+      <span class="inline-code">.\StarResonanceAutoMod.exe -a --debug -lang en</span><br>
+      • Only logs containing module stats will work.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Why do module names show as X1, X2, X3...?</strong></summary>
+    <div class="faq-content">
+      The converter ignores original IDs and names and generates clean auto-names (X1, X2…).
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Download CSV button does not appear?</strong></summary>
+    <div class="faq-content">
+      It only appears when:<br>
+      • A valid log file is parsed<br>
+      • CSV output is generated successfully.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Theme is not applying?</strong></summary>
+    <div class="faq-content">
+      • Refresh with <span class="inline-code">Ctrl + F5</span>.<br>
+      • Theme preference is saved in <span class="inline-code">localStorage</span>.<br>
+      • Page follows system dark mode by default.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Why is stat order random?</strong></summary>
+    <div class="faq-content">
+      The converter detects all stats found in the log and uses that dynamic list. No fixed stat list is used.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>File upload does nothing?</strong></summary>
+    <div class="faq-content">
+      • File must be <span class="inline-code">.log</span> or <span class="inline-code">.txt</span>.<br>
+      • Large logs may take a few seconds to load.<br>
+      • Some browsers require clicking anywhere once before file input works.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary><strong>Output looks empty or incorrect?</strong></summary>
+    <div class="faq-content">
+      Log must contain lines like:<br>
+      <span class="inline-code">Module:</span><br>
+      <span class="inline-code"> - Attack SPD: 7</span><br>
+      <span class="inline-code"> - Crit Focus: 2</span><br>
+      If the format differs, the converter cannot detect stats.
+    </div>
+  </details>
+
+</div>
 
 <script>
-// File upload
+// Theme toggle button
+const themeToggle = document.getElementById('themeToggle');
+
+function setTheme(theme) {
+  if(theme === 'dark') {
+    document.documentElement.setAttribute('data-theme','dark');
+    themeToggle.textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = '🌙';
+  }
+  localStorage.setItem('theme', theme);
+}
+
+// Detect system theme or saved theme
+const savedTheme = localStorage.getItem('theme');
+if(savedTheme) {
+  setTheme(savedTheme);
+} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  setTheme('dark');
+} else {
+  setTheme('light');
+}
+
+// Toggle theme on button click
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+});
+
+// File upload + auto convert
 document.getElementById("fileInput").addEventListener("change", function() {
     const file = this.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        document.getElementById("input").value = e.target.result;
+        const content = e.target.result;
+        document.getElementById("input").value = content;
+        convert(); // automatically convert after file is loaded
     };
     reader.readAsText(file);
 });
 
-// Converter
+// CSV Converter
 function convert() {
     const text = document.getElementById("input").value;
     const lines = text.split("\n");
@@ -91,8 +450,8 @@ function convert() {
     let current = null;
     const allStatsSet = new Set();
 
-    const moduleRegex = /Module:/;       // detect module start
-    const statRegex = /-\s([^:]+):\s(\d+)/; // detect stats
+    const moduleRegex = /Module:/;
+    const statRegex = /-\s([^:]+):\s(\d+)/;
 
     for (let line of lines) {
         if (moduleRegex.test(line)) {
@@ -100,7 +459,6 @@ function convert() {
             current = { stats: {} };
             continue;
         }
-
         let s = line.match(statRegex);
         if (s && current) {
             const statName = s[1].trim();
@@ -109,39 +467,39 @@ function convert() {
             allStatsSet.add(statName);
         }
     }
-
     if (current) modules.push(current);
 
-    // Dynamically detect stat order
     const statOrder = Array.from(allStatsSet);
-
-    // CSV header
     let csv = "Module," + statOrder.join(",") + "\n";
 
-    // Fill CSV rows: X1, X2, X3...
-    modules.forEach((m, i) => {
+    modules.forEach((m,i) => {
         const name = `X${i+1}`;
         const row = [name];
-
-        for (let stat of statOrder) {
-            row.push(m.stats[stat] ? m.stats[stat] : "");
-        }
-
+        for (let stat of statOrder) row.push(m.stats[stat] || "");
         csv += row.join(",") + "\n";
     });
 
-    // Output to screen
     document.getElementById("output").textContent = csv;
 
-    // Download link
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
+    // When CSV is ready
     const link = document.getElementById("downloadLink");
     link.href = url;
     link.download = "modules.csv";
-    link.style.display = "inline-block";
+    link.style.display = "inline-block"; // show link
     link.textContent = "Download CSV";
 }
+
+document.querySelectorAll('.instruction-box details').forEach(d => {
+  d.addEventListener('toggle', () => {
+    if (d.open) {
+      document.querySelectorAll('.instruction-box details').forEach(other => {
+        if (other !== d) other.removeAttribute('open');
+      });
+    }
+  });
+});
 </script>
 
 </body>
